@@ -17,19 +17,25 @@
 # include "libft.h"
 # include "ft_printf.h"
 # include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 # define VALID_OPTIONS "Ralrt"
 
 typedef struct	s_dir
 {
-	char		*name;
-	char		*full;
+	char			*name;
+	char			*full;
+	struct stat		*fstat;
+	struct passwd	*owner;
+	struct group	*group;
 }				t_dir;
 
 void	ft_insert_dir(t_list **lst, t_dir dir, unsigned char options);
 void	ft_ls(t_list *list_dir, unsigned char options, t_bool in_rec);
 void	ft_display(t_list *lst, unsigned char options);
 void	ft_del_tdir(t_dir *dir);
-t_dir	ft_gen_tdir(char *path, char* name);
+t_dir	ft_gen_tdir(char *path, char* name); 
+void	ft_ldisplay(t_dir *dir, int *max_len);
 
 #endif

@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "ft_ls.h"
+#include <errno.h>
+#include <string.h>
 
 static int		ft_store_options(int ac, char **av, unsigned char *options, char *ret)
 {
@@ -46,6 +48,7 @@ void			ft_del_tdir(t_dir *dir)
 {
 	free(dir->name);
 	free(dir->full);
+	free(dir->fstat);
 }
 
 t_dir			ft_gen_tdir(char *path, char *name)
@@ -65,6 +68,10 @@ t_dir			ft_gen_tdir(char *path, char *name)
 		else
 			new.full = ft_strjoinsep(path, name, '/');
 	}
+	if (!(new.fstat = (struct stat*)malloc(sizeof(struct stat))))
+		return (new);
+	if (stat(new.full, new.fstat) == -1)
+		ft_dprintf(2, "ls: %s: %s\n", new.full, strerror(errno));
 	return (new);
 }
 

@@ -35,11 +35,8 @@ static void			ft_printdir(DIR *dirp, char *path,  unsigned char options)
 	closedir(dirp);
 	ft_display(dir_to_disp, options);
 	ft_lstclear(&dir_to_disp);
-	if (dir_to_rec)
-	{
-		ft_printf("\n");
+	if (dir_to_rec && ft_printf("\n"))
 		ft_ls(dir_to_rec, options, TRUE);
-	}
 }
 
 void			ft_ls(t_list *lst_dir, unsigned char options, t_bool in_rec)

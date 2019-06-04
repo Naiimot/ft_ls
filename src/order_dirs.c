@@ -13,60 +13,53 @@
 #include "ft_ls.h"
 #include <errno.h>  
 #include <strings.h>
-#include <sys/types.h> 
-#include <sys/stat.h> 
 
 static void by_lmt(t_list **lst, t_dir dir, unsigned char options)
 {
-	t_list		*head;
-	struct stat	stat_h;
-	struct stat	stat_n;
+	t_list		*h;
 	
 	ft_lstadd(lst, ft_lstnew(NULL, 0));
-	head = *lst;
-	stat(dir.full, &stat_n);
-	while (head->next)
+	h = *lst;
+	while (h->next)
 	{
-		stat(((t_dir*)head->next->content)->full, &stat_h);
-		if ((stat_h.st_mtime == stat_n.st_mtime) && (((options & 8) == 0\
-			&& ft_strcmp(((t_dir*)head->next->content)->name, dir.name) > 0)\
-			|| ((options & 8) == 8\
-			&& ft_strcmp(((t_dir*)head->next->content)->name, dir.name) < 0)))
+		if ((((t_dir*)h->next->content)->fstat->st_mtime\
+		== dir.fstat->st_mtime) && (((options & 8) == 0\
+		&& ft_strcmp(((t_dir*)h->next->content)->name, dir.name) > 0)\
+		|| ((options & 8) == 8\
+		&& ft_strcmp(((t_dir*)h->next->content)->name, dir.name) < 0)))
 				break;
-		if (((options & 8) == 0 && stat_h.st_mtime < stat_n.st_mtime)\
-			|| ((options & 8) == 8 && stat_h.st_mtime > stat_n.st_mtime))
+		if (((options & 8) == 0\
+		&& ((t_dir*)h->next->content)->fstat->st_mtime < dir.fstat->st_mtime)\
+		|| ((options & 8) == 8\
+		&& ((t_dir*)h->next->content)->fstat->st_mtime > dir.fstat->st_mtime))
 			break;
-		head = head->next;
+		h = h->next;
 	}
-	ft_lstinsert(&head, ft_lstnew(&dir, sizeof(t_dir)));
-	head = *lst;
-	*lst = head->next;
-	free(head);
+	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
+	h = *lst;
+	*lst = h->next;
+	free(h);
 }
 
 static void	by_alpha(t_list **lst, t_dir dir, unsigned char options)
 {
-	t_list		*head;
+	t_list		*h;
 	
-	head = *lst;
-	if (((options & 8) == 0\
-	&& ft_strcmp(((t_dir*)head->content)->name, dir.name) > 0)\
-	|| ((options & 8) == 8\
-	&& ft_strcmp(((t_dir*)head->content)->name, dir.name) < 0))
-		ft_lstadd(lst, ft_lstnew(&dir, sizeof(t_dir)));
-	else
+	ft_lstadd(lst, ft_lstnew(NULL, 0));
+	h = *lst;
+	while (h->next)
 	{
-		while (head->next)
-		{
-			if (((options & 8) == 0\
-			&& ft_strcmp(((t_dir*)head->content)->name, dir.name) > 0)\
+		if (((options & 8) == 0\
+			&& ft_strcmp(((t_dir*)h->next->content)->name, dir.name) > 0)\
 			|| ((options & 8) == 8\
-			&& ft_strcmp(((t_dir*)head->content)->name, dir.name) < 0))
+			&& ft_strcmp(((t_dir*)h->next->content)->name, dir.name) < 0))
 				break;
-			head = head->next;
-		}
-		ft_lstinsert(&head, ft_lstnew(&dir, sizeof(t_dir)));
+			h = h->next;
 	}
+	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
+	h = *lst;
+	*lst = h->next;
+	free(h);
 }
 
 void	ft_insert_dir(t_list **lst, t_dir dir, unsigned char options)
