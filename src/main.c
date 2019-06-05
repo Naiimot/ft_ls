@@ -63,6 +63,12 @@ char			*ft_get_only_name(char *str)
 			last_slash_pos = i;
 	if (last_slash_pos == 0)
 		return (str);
+	else if (str[last_slash_pos + 1] == '\0')
+	{
+		while (str[last_slash_pos - 1] != '/')
+			last_slash_pos--;
+		return (&str[last_slash_pos]);
+	}
 	else
 		return (&str[last_slash_pos + 1]);
 }
@@ -83,7 +89,7 @@ t_dir			ft_gen_tdir(char *path, char *name)
 	}
 	if (!(new.fstat = (struct stat*)malloc(sizeof(struct stat))))
 		return (new);
-	if (stat(new.full, new.fstat) == -1)
+	if (lstat(new.full, new.fstat) == -1)
 		ft_dprintf(2, "ls: %s: %s\n", new.full, strerror(errno));
 	return (new);
 }

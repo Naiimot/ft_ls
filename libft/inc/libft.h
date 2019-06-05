@@ -81,6 +81,15 @@ void			ft_putchar_fd(char c, int fd);
 void			ft_putstr_fd(char const *str, int fd);
 void			ft_putendl_fd(char const *s, int fd);
 void			ft_putnbr_fd(int n, int fd);
+void			ft_putnstr(char const *s, int size);
+char			*ft_strndup(const char *s1, size_t size);
+char			*ft_strcdup(const char *s1, char c);
+int				ft_strclen(const char *s, const char c);
+int				ft_sqrt(int n);
+int				ft_pwd(int n, int pow);
+uint64_t		ft_pwd_uint64(uint64_t n, int pow);
+unsigned short	ft_lenint_base(int n, unsigned short const b);
+void			ft_print_words_tables(const char **tab);
 typedef struct	s_list
 {
 	void			*content;
@@ -88,6 +97,7 @@ typedef struct	s_list
 	struct s_list	*next;
 }				t_list;
 t_list			*ft_lstnew(void const *content, size_t content_size);
+t_list			*ft_lstnew_p(void *content, size_t content_size);
 void			ft_lstdelone(t_list **alst, void (*del)(void*, size_t));
 void			ft_lstdel(t_list **alst, void (*del)(void*, size_t));
 void			ft_lstadd(t_list **alst, t_list *new);
@@ -101,14 +111,5 @@ void			ft_putlst(t_list *lst);
 void			ft_lstclearifdata(t_list **lst, void *data);
 int				ft_lstlen(t_list *lst);
 void			ft_lstclear(t_list **lst);
-void			ft_putnstr(char const *s, int size);
-char			*ft_strndup(const char *s1, size_t size);
-char			*ft_strcdup(const char *s1, char c);
-int				ft_strclen(const char *s, const char c);
-int				ft_sqrt(int n);
-int				ft_pwd(int n, int pow);
-uint64_t		ft_pwd_uint64(uint64_t n, int pow);
-unsigned short	ft_lenint_base(int n, unsigned short const b);
-void			ft_print_words_tables(const char **tab);
 
 #endif

@@ -14,7 +14,21 @@
 #include <errno.h>
 #include <string.h>
 
-static void			ft_printdir(DIR *dirp, char *path,  unsigned char options)
+static t_bool		ft_no_slash(char *name)
+{
+	int i;
+	
+	i = 0;
+	while (name[i])
+		i++;
+	if (name[i - 1] == '/')
+		return (FALSE);
+	else
+		return (TRUE);
+}
+
+static void			ft_printdir(DIR *dirp, t_dir *current,\
+						unsigned char options)
 {
 	struct	dirent	*dir;
 	t_list			*dir_to_rec;
@@ -22,21 +36,28 @@ static void			ft_printdir(DIR *dirp, char *path,  unsigned char options)
 
 	dir_to_rec = NULL;
 	dir_to_disp = NULL;
-	while ((dir = readdir(dirp)) != NULL)
+	if (S_ISLNK(current->fstat->st_mode) && ft_no_slash(current->name))
+		ft_lstadd(&dir_to_disp, ft_lstnew(current, sizeof(t_dir)));
+	else
 	{
-		if ((options & 2) == 2 || dir->d_name[0] != '.')
-			ft_insert_dir(&dir_to_disp, ft_gen_tdir(path, dir->d_name), options);
-		if ((options & 1) == 1 && dir->d_type == DT_DIR\
-			&& ((ft_strequ(dir->d_name, ".") == 0\
-			&& ft_strequ(dir->d_name, "..") == 0)\
-			&& ((options & 2) == 2 || dir->d_name[0] != '.')))
-			ft_insert_dir(&dir_to_rec, ft_gen_tdir(path, dir->d_name), options);
+		while ((dir = readdir(dirp)) != NULL)
+		{
+			if ((options & 2) == 2 || dir->d_name[0] != '.')
+				ft_insert_dir(&dir_to_disp, ft_gen_tdir(current->full, dir->d_name), options);
+			if ((options & 1) == 1 && dir->d_type == DT_DIR\
+				&& ((ft_strequ(dir->d_name, ".") == 0\
+				&& ft_strequ(dir->d_name, "..") == 0)\
+				&& ((options & 2) == 2 || dir->d_name[0] != '.')))
+				ft_insert_dir(&dir_to_rec, ft_gen_tdir(current->full, dir->d_name), options);
+		}
 	}
 	closedir(dirp);
 	ft_display(dir_to_disp, options);
 	ft_lstclear(&dir_to_disp);
 	if (dir_to_rec && ft_printf("\n"))
 		ft_ls(dir_to_rec, options, TRUE);
+	if (!(S_ISLNK(current->fstat->st_mode) && ft_no_slash(current->name)))
+		ft_del_tdir(current);
 }
 
 void			ft_ls(t_list *lst_dir, unsigned char options, t_bool in_rec)
@@ -50,16 +71,16 @@ void			ft_ls(t_list *lst_dir, unsigned char options, t_bool in_rec)
 	while (head)
 	{
 		dirp = opendir(((t_dir*)head->content)->full);
-		if (in_rec == TRUE || dir_count > 1)
+		if ((in_rec == TRUE || dir_count > 1)\
+			&& ((t_dir*)head->content)->fstat->st_ino != 0)
 			ft_printf("%s:\n", ((t_dir*)head->content)->full);
 		if (dirp != NULL)
-			ft_printdir(dirp, ((t_dir*)head->content)->full, options);
-		else
+			ft_printdir(dirp, head->content, options);
+		else if (((t_dir*)head->content)->fstat->st_ino != 0)
 			ft_dprintf(2, "ls: %s: %s\n", ((t_dir*)head->content)->name,\
 				strerror(errno));
-		if (head->next)
+		if (head->next && ((t_dir*)head->next->content)->fstat->st_ino != 0)
 			ft_printf("\n");
-		ft_del_tdir(head->content);
 		head = head->next;
 	}
 	ft_lstclear(&lst_dir);

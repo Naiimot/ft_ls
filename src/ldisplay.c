@@ -2,6 +2,9 @@
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
+#include <string.h>
+#include <limits.h>
+#include <unistd.h>
 
 static void	ft_get_type(struct stat *fstat, char *perms)
 {
@@ -66,13 +69,22 @@ void	ft_ldisplay(t_dir *dir, int *max_len)
 	char			perms[11];
 	struct passwd	*owner;
 	struct group	*group;
+	char			buff[PATH_MAX];
+	ssize_t			len;
 
-	stat(dir->full, dir->fstat);
+
 	ft_get_perms(dir->fstat, perms);
 	owner = getpwuid(dir->fstat->st_uid);
 	group = getgrgid(dir->fstat->st_gid);
-	ft_printf("%s  %*d %-*s  %-*s  %*d %s %s\n",\
+	ft_printf("%s  %*d %-*s  %-*s  %*d %s %s",\
 		perms, max_len[0], dir->fstat->st_nlink, max_len[1], owner->pw_name,\
 		max_len[2], group->gr_name, max_len[3], dir->fstat->st_size,\
 		ft_6month(dir) + 4, dir->name);
+	if (S_ISLNK(dir->fstat->st_mode))
+	{
+		if ((len = readlink(dir->full, buff, sizeof(buff)-1)) != -1)
+			buff[len] = '\0';
+		ft_printf(" -> %s", buff);
+	}
+	ft_printf("\n");
 }
