@@ -24,9 +24,9 @@ static void by_lmt(t_list **lst, t_dir dir, unsigned char options)
 	{
 		if ((((t_dir*)h->next->content)->fstat->st_mtime\
 		== dir.fstat->st_mtime) && (((options & 8) == 0\
-		&& ft_strcmp(((t_dir*)h->next->content)->name, dir.name) > 0)\
+		&& ft_strcmp(((t_dir*)h->next->content)->full, dir.full) > 0)\
 		|| ((options & 8) == 8\
-		&& ft_strcmp(((t_dir*)h->next->content)->name, dir.name) < 0)))
+		&& ft_strcmp(((t_dir*)h->next->content)->full, dir.full) < 0)))
 				break;
 		if (((options & 8) == 0\
 		&& ((t_dir*)h->next->content)->fstat->st_mtime < dir.fstat->st_mtime)\
@@ -50,9 +50,9 @@ static void	by_alpha(t_list **lst, t_dir dir, unsigned char options)
 	while (h->next)
 	{
 		if (((options & 8) == 0\
-			&& ft_strcmp(((t_dir*)h->next->content)->name, dir.name) > 0)\
+			&& ft_strcmp(((t_dir*)h->next->content)->full, dir.full) > 0)\
 			|| ((options & 8) == 8\
-			&& ft_strcmp(((t_dir*)h->next->content)->name, dir.name) < 0))
+			&& ft_strcmp(((t_dir*)h->next->content)->full, dir.full) < 0))
 				break;
 			h = h->next;
 	}

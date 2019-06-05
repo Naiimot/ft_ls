@@ -51,18 +51,31 @@ void			ft_del_tdir(t_dir *dir)
 	free(dir->fstat);
 }
 
+char			*ft_get_only_name(char *str)
+{
+	int	i;
+	int	last_slash_pos;
+
+	last_slash_pos = 0;
+	i = -1;
+	while (str[++i])
+		if (str[i] == '/')
+			last_slash_pos = i;
+	if (last_slash_pos == 0)
+		return (str);
+	else
+		return (&str[last_slash_pos + 1]);
+}
+
 t_dir			ft_gen_tdir(char *path, char *name)
 {
 	t_dir	new;
 	
+	new.name = ft_strdup(ft_get_only_name(name));
 	if (path == NULL)
-	{
-		new.name = ft_strdup(name);
 		new.full = ft_strdup(name);
-	}
 	else
 	{
-		new.name = ft_strdup(name);
 		if (ft_strequ(path, "/") == 1)
 			new.full = ft_strjoin(path, name);
 		else

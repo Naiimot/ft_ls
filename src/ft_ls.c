@@ -50,17 +50,15 @@ void			ft_ls(t_list *lst_dir, unsigned char options, t_bool in_rec)
 	while (head)
 	{
 		dirp = opendir(((t_dir*)head->content)->full);
-		if (dirp == NULL)
-			ft_dprintf(2, "ls: %s: %s\n", ((t_dir*)head->content)->full,\
-				strerror(errno));
-		else
-		{
-			if (in_rec == TRUE || dir_count > 1)
-				ft_printf("%s:\n", ((t_dir*)head->content)->full);
+		if (in_rec == TRUE || dir_count > 1)
+			ft_printf("%s:\n", ((t_dir*)head->content)->full);
+		if (dirp != NULL)
 			ft_printdir(dirp, ((t_dir*)head->content)->full, options);
-			if (head->next)
-				ft_printf("\n");
-		}
+		else
+			ft_dprintf(2, "ls: %s: %s\n", ((t_dir*)head->content)->name,\
+				strerror(errno));
+		if (head->next)
+			ft_printf("\n");
 		ft_del_tdir(head->content);
 		head = head->next;
 	}
