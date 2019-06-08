@@ -10,14 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ls.h"
-#include <errno.h>
-#include <string.h>
+#include "main.h"
 
-static int		ft_store_options(int ac, char **av, unsigned char *options, char *ret)
+static int	ft_store_options(int ac, char **av, unsigned char *options,\
+				char *ret)
 {
-	int				i;
-	int				j;
+	int	i;
+	int	j;
 
 	i = 1;
 	while (i < ac && av[i][0] == '-')
@@ -25,7 +24,7 @@ static int		ft_store_options(int ac, char **av, unsigned char *options, char *re
 		j = 0;
 		while (av[i][++j])
 		{
-			if (ft_strchr(VALID_OPTIONS, (int)av[i][j]) == NULL)
+			if (ft_strchr(VALID_OPTIONS, av[i][j]) == NULL)
 				*ret = av[i][j];
 			if (av[i][j] == 'R')
 				*options = *options | 1;
@@ -40,80 +39,52 @@ static int		ft_store_options(int ac, char **av, unsigned char *options, char *re
 		}
 		i++;
 	}
-	*ret = 0;
 	return (i);
 }
 
-void			ft_del_tdir(t_dir *dir)
+static int	ft_handle_options(int ac, char **av, unsigned char *options)
 {
-	free(dir->name);
-	free(dir->full);
-	free(dir->fstat);
-}
+	char	c;
+	int		i;
 
-char			*ft_get_only_name(char *str)
-{
-	int	i;
-	int	last_slash_pos;
-
-	last_slash_pos = 0;
-	i = -1;
-	while (str[++i])
-		if (str[i] == '/')
-			last_slash_pos = i;
-	if (last_slash_pos == 0)
-		return (str);
-	else if (str[last_slash_pos + 1] == '\0')
-	{
-		while (str[last_slash_pos - 1] != '/')
-			last_slash_pos--;
-		return (&str[last_slash_pos]);
-	}
-	else
-		return (&str[last_slash_pos + 1]);
-}
-
-t_dir			ft_gen_tdir(char *path, char *name)
-{
-	t_dir	new;
-	
-	new.name = ft_strdup(ft_get_only_name(name));
-	if (path == NULL)
-		new.full = ft_strdup(name);
-	else
-	{
-		if (ft_strequ(path, "/") == 1)
-			new.full = ft_strjoin(path, name);
-		else
-			new.full = ft_strjoinsep(path, name, '/');
-	}
-	if (!(new.fstat = (struct stat*)malloc(sizeof(struct stat))))
-		return (new);
-	if (lstat(new.full, new.fstat) == -1)
-		ft_dprintf(2, "ls: %s: %s\n", new.full, strerror(errno));
-	return (new);
-}
-
-int				main(int ac, char **av)
-{
-	unsigned char	options;
-	char			c;
-	t_list			*lst_dir;
-	int				i;
-
-	options = 0;
-	i = ft_store_options(ac, av, &options, &c);
+	*options = 0;
+	c = '\0';
+	i = ft_store_options(ac, av, options, &c);
 	if (c  != '\0')
 	{
 		ft_dprintf(2, "ls: illegal option -- %c\nusage: ls [-%s] [file ...]\n",\
 			c, VALID_OPTIONS);
 		return (-1);
 	}
+	return (i);
+}
+
+static void	ft_print_file_and_dir(t_list **tab_lst, unsigned char options)
+{
+	ft_display(tab_lst[0], options, FALSE);
+	if (tab_lst[0] && tab_lst[1])
+		ft_printf("\n");
+	ft_list_and_rec(tab_lst[1], options, (tab_lst[0]) ? TRUE : FALSE);
+	ft_lstclear(&tab_lst[0]);
+}
+
+int				main(int ac, char **av)
+{
+	unsigned char	options;
+	t_list			*tab_lst[2];
+	int				i;
+	t_dir			tmp;
+
+	if ((i = ft_handle_options(ac, av, &options)) == -1)
+			return (-1);
+	ft_bzero(tab_lst, sizeof(t_list*) * 2);
 	if (i == ac)
-		ft_insert_dir(&lst_dir, ft_gen_tdir(NULL, "."), options);
+		ft_insert_dir(&tab_lst[1], ft_gen_tdir(NULL, "."), options);
 	else
 		while (i < ac)
-			ft_insert_dir(&lst_dir, ft_gen_tdir(NULL, av[i++]), options);
-	ft_ls(lst_dir, options, FALSE);
+			if (ft_fill_fstat(&tmp, NULL, av[i++]) == TRUE) 
+				ft_insert_dir((S_ISDIR(tmp.fstat->st_mode)) ?\
+					&tab_lst[1] : &tab_lst[0], tmp, options);
+	ft_print_file_and_dir(tab_lst, options);
 	return (0);
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_ls.h                                            :+:      :+:    :+:   */
+/*   list_and_rec.h		                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,20 +10,23 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_LS_H
+#ifndef LIST_AND_REC_H
 
-# define FT_LS_H
+# define LIST_AND_REC_H
 
 # include "libft.h"
+# include "ft_printf.h"
+# include "ft_ls.h"
+# include <sys/types.h> 
+# include <sys/stat.h> 
+# include <errno.h>
+# include <string.h>
+# include <dirent.h>
 
-typedef struct	s_dir
-{
-	char			*name;
-	char			*full;
-	struct stat		*fstat;
-	struct passwd	*owner;
-	struct group	*group;
-}				t_dir;
-
+void	ft_display(t_list *lst, unsigned char options, t_bool dirs);
+void	ft_insert_dir(t_list **lst, t_dir dir, const unsigned char options);
+void	ft_del_tdir(t_dir *dir);
+void	ft_list_and_rec(t_list *lst_dir, unsigned char options, t_bool header);
+t_bool	ft_fill_fstat(t_dir *tmp, char *path, char *name);
 
 #endif

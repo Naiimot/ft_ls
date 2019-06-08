@@ -10,28 +10,38 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ls.h"
-#include <errno.h>  
-#include <strings.h>
+#include "order_dirs.h"
 
-static void by_lmt(t_list **lst, t_dir dir, unsigned char options)
+static t_bool	ft_st_mtime_equal(t_dir *head, t_dir new,\
+					const unsigned char options)
+{
+	if (head->fstat->st_mtimespec.tv_nsec == new.fstat->st_mtimespec.tv_nsec\
+		&& (((options & 8) == 0 && ft_strcmp(head->full, new.full) > 0)\
+		|| ((options & 8) == 8 && ft_strcmp(head->full, new.full) < 0)))
+		return (TRUE);
+	else if (((options & 8) == 0 && head->fstat->st_mtimespec.tv_nsec\
+		< new.fstat->st_mtimespec.tv_nsec) || ((options & 8) == 8\
+		&& head->fstat->st_mtimespec.tv_nsec > new.fstat->st_mtimespec.tv_nsec))
+		return (TRUE);
+	return (FALSE);
+}
+
+static void		by_lmt(t_list **lst, t_dir dir, const unsigned char options)
 {
 	t_list		*h;
-	
+
 	ft_lstadd(lst, ft_lstnew(NULL, 0));
 	h = *lst;
 	while (h->next)
 	{
-		if ((((t_dir*)h->next->content)->fstat->st_mtime\
-		== dir.fstat->st_mtime) && (((options & 8) == 0\
-		&& ft_strcmp(((t_dir*)h->next->content)->full, dir.full) > 0)\
-		|| ((options & 8) == 8\
-		&& ft_strcmp(((t_dir*)h->next->content)->full, dir.full) < 0)))
-				break;
-		if (((options & 8) == 0\
-		&& ((t_dir*)h->next->content)->fstat->st_mtime < dir.fstat->st_mtime)\
-		|| ((options & 8) == 8\
-		&& ((t_dir*)h->next->content)->fstat->st_mtime > dir.fstat->st_mtime))
+		if (((t_dir*)h->next->content)->fstat->st_mtime == dir.fstat->st_mtime\
+			&& ft_st_mtime_equal(h->next->content, dir, options) == TRUE)
+			break ;
+		else if (((options & 8) == 0\
+			&& ((t_dir*)h->next->content)->fstat->st_mtime\
+			< dir.fstat->st_mtime) || ((options & 8) == 8\
+			&& ((t_dir*)h->next->content)->fstat->st_mtime\
+			> dir.fstat->st_mtime))
 			break;
 		h = h->next;
 	}
@@ -41,10 +51,10 @@ static void by_lmt(t_list **lst, t_dir dir, unsigned char options)
 	free(h);
 }
 
-static void	by_alpha(t_list **lst, t_dir dir, unsigned char options)
+static void	by_alpha(t_list **lst, t_dir dir, const unsigned char options)
 {
 	t_list		*h;
-	
+
 	ft_lstadd(lst, ft_lstnew(NULL, 0));
 	h = *lst;
 	while (h->next)
@@ -53,8 +63,8 @@ static void	by_alpha(t_list **lst, t_dir dir, unsigned char options)
 			&& ft_strcmp(((t_dir*)h->next->content)->full, dir.full) > 0)\
 			|| ((options & 8) == 8\
 			&& ft_strcmp(((t_dir*)h->next->content)->full, dir.full) < 0))
-				break;
-			h = h->next;
+			break;
+		h = h->next;
 	}
 	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
 	h = *lst;
@@ -62,9 +72,9 @@ static void	by_alpha(t_list **lst, t_dir dir, unsigned char options)
 	free(h);
 }
 
-void	ft_insert_dir(t_list **lst, t_dir dir, unsigned char options)
+void	ft_insert_dir(t_list **lst, t_dir dir, const unsigned char options)
 {
-	void (*pf[2])(t_list **lst, t_dir dir, unsigned char options);
+	void (*pf[2])(t_list **lst, t_dir dir, const unsigned char options);
 
 	if (*lst == NULL)
 		ft_lstadd(lst, ft_lstnew(&dir, sizeof(t_dir)));

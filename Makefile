@@ -15,7 +15,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 
 # sources
-SRC_NAME = ldisplay.c display.c ft_ls.c main.c order_dirs.c
+SRC_NAME = xattr_acl.c t_dir.c ldisplay.c display.c main.c list_and_rec.c order_dirs.c
 SRC_DIR = src/
 SRC = $(addprefix $(SRC_DIR), $(SRC_NAME))
 

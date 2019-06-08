@@ -1,10 +1,4 @@
-#include "ft_ls.h"
-#include <pwd.h>
-#include <grp.h>
-#include <time.h>
-#include <string.h>
-#include <limits.h>
-#include <unistd.h>
+#include "ldisplay.h"
 
 static void	ft_get_type(struct stat *fstat, char *perms)
 {
@@ -64,7 +58,7 @@ static char		*ft_6month(t_dir *dir)
 	return (str);
 }
 
-void	ft_ldisplay(t_dir *dir, int *max_len)
+void	ft_ldisplay(t_dir *dir, int *max_len, unsigned char options)
 {
 	char			perms[11];
 	struct passwd	*owner;
@@ -72,14 +66,19 @@ void	ft_ldisplay(t_dir *dir, int *max_len)
 	char			buff[PATH_MAX];
 	ssize_t			len;
 
-
+	options = 0;
 	ft_get_perms(dir->fstat, perms);
 	owner = getpwuid(dir->fstat->st_uid);
 	group = getgrgid(dir->fstat->st_gid);
-	ft_printf("%s  %*d %-*s  %-*s  %*d %s %s",\
-		perms, max_len[0], dir->fstat->st_nlink, max_len[1], owner->pw_name,\
-		max_len[2], group->gr_name, max_len[3], dir->fstat->st_size,\
-		ft_6month(dir) + 4, dir->name);
+	ft_printf("%s%c %*d %-*s  %-*s  ", perms, ft_xattr_acl(dir),\
+		max_len[0], dir->fstat->st_nlink, max_len[1], owner->pw_name,\
+		max_len[2], group->gr_name);
+	if (perms[0] == 'c')
+		ft_printf("%3d, %3d %s %s", (dir->fstat->st_rdev & 0xFF000000) >> 24,\
+			dir->fstat->st_rdev & 0xFFFFF, ft_6month(dir) + 4, dir->name);
+	else
+		ft_printf("%*d %s %s", max_len[3], dir->fstat->st_size,\
+			ft_6month(dir) + 4, dir->name);
 	if (S_ISLNK(dir->fstat->st_mode))
 	{
 		if ((len = readlink(dir->full, buff, sizeof(buff)-1)) != -1)
