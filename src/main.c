@@ -12,7 +12,7 @@
 
 #include "main.h"
 
-static int	ft_store_options(int ac, char **av, unsigned char *options,\
+static int	ft_store_options(int ac, char **av, unsigned int *options,\
 				char *ret)
 {
 	int	i;
@@ -27,22 +27,29 @@ static int	ft_store_options(int ac, char **av, unsigned char *options,\
 			if (ft_strchr(VALID_OPTIONS, av[i][j]) == NULL)
 				*ret = av[i][j];
 			if (av[i][j] == 'R')
-				*options = *options | 1;
+				*options = *options | 1 << 0;
 			else if (av[i][j] == 'a')
-				*options = *options | 2;
+				*options = *options | 1 << 1;
 			else if (av[i][j] == 'l')
-				*options = *options | 4;
+				*options = *options | 1 << 2;
 			else if (av[i][j] == 'r')
-				*options = *options | 8;
+				*options = *options | 1 << 3;
 			else if (av[i][j] == 't')
-				*options = *options | 16;
+				*options = *options | 1 << 4;
+			else if (av[i][j] == '@')
+				*options = *options | 1 << 5;
+			else if (av[i][j] == 'e')
+				*options = *options | 1 << 6;
+			else if (av[i][j] == 'G')
+				*options = *options | 1 << 7;
+
 		}
 		i++;
 	}
 	return (i);
 }
 
-static int	ft_handle_options(int ac, char **av, unsigned char *options)
+static int	ft_handle_options(int ac, char **av, unsigned int *options)
 {
 	char	c;
 	int		i;
@@ -59,18 +66,20 @@ static int	ft_handle_options(int ac, char **av, unsigned char *options)
 	return (i);
 }
 
-static void	ft_print_file_and_dir(t_list **tab_lst, unsigned char options)
+static void	ft_print_file_and_dir(t_list **tab_lst, unsigned int options)
 {
+	t_bool	flistexist;
+
+	flistexist = (tab_lst[0]) ? TRUE : FALSE;
 	ft_display(tab_lst[0], options, FALSE);
 	if (tab_lst[0] && tab_lst[1])
 		ft_printf("\n");
-	ft_list_and_rec(tab_lst[1], options, (tab_lst[0]) ? TRUE : FALSE);
-	ft_lstclear(&tab_lst[0]);
+	ft_list_and_rec(tab_lst[1], options, flistexist);
 }
 
 int				main(int ac, char **av)
 {
-	unsigned char	options;
+	unsigned int	options;
 	t_list			*tab_lst[2];
 	int				i;
 	t_dir			tmp;

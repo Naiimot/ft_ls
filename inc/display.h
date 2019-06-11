@@ -7,8 +7,10 @@
 # include <sys/stat.h> 
 # include <pwd.h>
 # include <grp.h>
+# include <colors.h>
 
-void	ft_ldisplay(t_dir *dir, int *max_len, unsigned char options);
+void	ft_ldisplay(t_dir *dir, int *max_len, char *perms,\
+			unsigned int options);
 void	ft_del_tdir(t_dir *dir);
 
 #endif

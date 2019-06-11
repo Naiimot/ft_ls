@@ -12,6 +12,48 @@
 
 #include "display.h"
 
+static void	ft_get_type(struct stat *fstat, char *perms)
+{
+	if (S_ISREG(fstat->st_mode))
+		perms[0] ='-';
+	else if (S_ISDIR(fstat->st_mode))
+		perms[0] ='d';
+	else if (S_ISCHR(fstat->st_mode))
+		perms[0] ='c';
+	else if (S_ISBLK(fstat->st_mode))
+		perms[0] ='b';
+	else if (S_ISLNK(fstat->st_mode))
+		perms[0] ='l';
+	else if (S_ISFIFO(fstat->st_mode))
+		perms[0] ='p';
+	else if (S_ISSOCK(fstat->st_mode))
+		perms[0] ='s';
+}
+
+static void	ft_get_perms(struct stat *fstat, char *perms)
+{
+	ft_get_type(fstat, perms);
+	perms[1] = (fstat->st_mode & S_IRUSR) ? 'r' : '-';
+	perms[2] = (fstat->st_mode & S_IWUSR) ? 'w' : '-';
+	if (fstat->st_mode & S_ISUID)
+		perms[3] = (fstat->st_mode & S_IXUSR) ? 's' : 'S';
+	else
+		perms[3] = (fstat->st_mode & S_IXUSR) ? 'x' : '-';
+	perms[4] = (fstat->st_mode & S_IRGRP) ? 'r' : '-';
+	perms[5] = (fstat->st_mode & S_IWGRP) ? 'w' : '-';
+	if (fstat->st_mode & S_ISGID)
+		perms[6] = (fstat->st_mode & S_IXGRP) ? 's' : 'S';
+	else
+		perms[6] = (fstat->st_mode & S_IXGRP) ? 'x' : '-';
+	perms[7] = (fstat->st_mode & S_IROTH) ? 'r' : '-';
+	perms[8] = (fstat->st_mode & S_IWOTH) ? 'w' : '-';
+	if (fstat->st_mode & S_ISVTX)
+		perms[9] = (fstat->st_mode & S_IXOTH) ? 't' : 'T';
+	else
+		perms[9] = (fstat->st_mode & S_IXOTH) ? 'x' : '-';
+	perms[10] = '\0';
+}
+
 static void	ft_len_fields(t_dir *dir, int *field_sizes, struct passwd *owner,\
 				struct group *group)
 {
@@ -48,10 +90,11 @@ static void	ft_get_field_sizes(t_list *lst, int *field_sizes)
 	}
 }
 
-void		ft_display(t_list *lst, unsigned char options, t_bool dirs)
+void		ft_display(t_list *lst, unsigned int options, t_bool dirs)
 {
 	t_list	*head;
 	int		field_sizes[5];
+	char	perms[11];
 
 	ft_get_field_sizes(lst, field_sizes);
 	if ((options & 4) == 4 && dirs == TRUE)
@@ -59,12 +102,14 @@ void		ft_display(t_list *lst, unsigned char options, t_bool dirs)
 	head = lst;
 	while (head)
 	{
+		ft_get_perms(((t_dir*)head->content)->fstat, perms);
 		if ((options & 2) == 2 || ((t_dir*)head->content)->name[0] != '.')
 		{
 			if ((options & 4) == 4)
-				ft_ldisplay(head->content, field_sizes, options);
+				ft_ldisplay(head->content, field_sizes, perms,  options);
 			else
-				ft_printf("%s\n", ((t_dir*)head->content)->name);
+				ft_printf("%s%s%s\n", ft_colorize(perms, options),\
+					((t_dir*)head->content)->name, C_EOC);
 		}
 		ft_del_tdir(head->content);
 		head = head->next;

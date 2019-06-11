@@ -23,10 +23,10 @@
 # include <string.h>
 # include <dirent.h>
 
-void	ft_display(t_list *lst, unsigned char options, t_bool dirs);
-void	ft_insert_dir(t_list **lst, t_dir dir, const unsigned char options);
+void	ft_display(t_list *lst, unsigned int options, t_bool dirs);
+void	ft_insert_dir(t_list **lst, t_dir dir, const unsigned int options);
 void	ft_del_tdir(t_dir *dir);
-void	ft_list_and_rec(t_list *lst_dir, unsigned char options, t_bool header);
+void	ft_list_and_rec(t_list *lst_dir, unsigned int options, t_bool header);
 t_bool	ft_fill_fstat(t_dir *tmp, char *path, char *name);
 
 #endif

@@ -12,10 +12,10 @@
 
 NAME = ft_ls
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra 
 
 # sources
-SRC_NAME = xattr_acl.c t_dir.c ldisplay.c display.c main.c list_and_rec.c order_dirs.c
+SRC_NAME = colors.c uuid_to_id.c acl.c xattr_acl.c t_dir.c ldisplay.c display.c main.c list_and_rec.c order_dirs.c
 SRC_DIR = src/
 SRC = $(addprefix $(SRC_DIR), $(SRC_NAME))
 
@@ -55,7 +55,6 @@ clean :
 	rm -rf $(OBJ_DIR)
 
 fclean : clean
-	rm -rf $(LIB_DIR)$(LIB_NAME)
 	rm -rf $(NAME)
 
 re : fclean all

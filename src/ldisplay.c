@@ -1,46 +1,6 @@
 #include "ldisplay.h"
 
-static void	ft_get_type(struct stat *fstat, char *perms)
-{
-	if (S_ISREG(fstat->st_mode))
-		perms[0] ='-';
-	else if (S_ISDIR(fstat->st_mode))
-		perms[0] ='d';
-	else if (S_ISCHR(fstat->st_mode))
-		perms[0] ='c';
-	else if (S_ISBLK(fstat->st_mode))
-		perms[0] ='b';
-	else if (S_ISLNK(fstat->st_mode))
-		perms[0] ='l';
-	else if (S_ISFIFO(fstat->st_mode))
-		perms[0] ='p';
-	else if (S_ISSOCK(fstat->st_mode))
-		perms[0] ='s';
-}
 
-static void	ft_get_perms(struct stat *fstat, char *perms)
-{
-	ft_get_type(fstat, perms);
-	perms[1] = (fstat->st_mode & S_IRUSR) ? 'r' : '-';
-	perms[2] = (fstat->st_mode & S_IWUSR) ? 'w' : '-';
-	if (fstat->st_mode & S_ISUID)
-		perms[3] = (fstat->st_mode & S_IXUSR) ? 's' : 'S';
-	else
-		perms[3] = (fstat->st_mode & S_IXUSR) ? 'x' : '-';
-	perms[4] = (fstat->st_mode & S_IRGRP) ? 'r' : '-';
-	perms[5] = (fstat->st_mode & S_IWGRP) ? 'w' : '-';
-	if (fstat->st_mode & S_ISGID)
-		perms[6] = (fstat->st_mode & S_IXGRP) ? 's' : 'S';
-	else
-		perms[6] = (fstat->st_mode & S_IXGRP) ? 'x' : '-';
-	perms[7] = (fstat->st_mode & S_IROTH) ? 'r' : '-';
-	perms[8] = (fstat->st_mode & S_IWOTH) ? 'w' : '-';
-	if (fstat->st_mode & S_ISVTX)
-		perms[9] = (fstat->st_mode & S_IXOTH) ? 't' : 'T';
-	else
-		perms[9] = (fstat->st_mode & S_IXOTH) ? 'x' : '-';
-	perms[10] = '\0';
-}
 
 static char		*ft_6month(t_dir *dir)
 {
@@ -58,27 +18,41 @@ static char		*ft_6month(t_dir *dir)
 	return (str);
 }
 
-void	ft_ldisplay(t_dir *dir, int *max_len, unsigned char options)
+static char		ft_xattr_acl(const char* path, t_xattr_acl *storage)
 {
-	char			perms[11];
+	storage->sxattr = listxattr(path, NULL, 0, XATTR_NOFOLLOW);
+	storage->acl = acl_get_file(path, ACL_TYPE_EXTENDED);
+	if (storage->sxattr > 0)
+		return ('@');
+	else if (storage->acl != NULL)
+		return ('+');
+	else
+	{
+		storage->sxattr = 0;
+		return (' ');
+	}
+}
+
+void	ft_ldisplay(t_dir *dir, int *max_len, char *perms, unsigned int options)
+{
 	struct passwd	*owner;
 	struct group	*group;
 	char			buff[PATH_MAX];
+	t_xattr_acl		storage;
 	ssize_t			len;
 
-	options = 0;
-	ft_get_perms(dir->fstat, perms);
 	owner = getpwuid(dir->fstat->st_uid);
 	group = getgrgid(dir->fstat->st_gid);
-	ft_printf("%s%c %*d %-*s  %-*s  ", perms, ft_xattr_acl(dir),\
+	ft_printf("%s%c %*d %-*s  %-*s  ", perms, ft_xattr_acl(dir->full, &storage),\
 		max_len[0], dir->fstat->st_nlink, max_len[1], owner->pw_name,\
 		max_len[2], group->gr_name);
 	if (perms[0] == 'c')
-		ft_printf("%3d, %3d %s %s", (dir->fstat->st_rdev & 0xFF000000) >> 24,\
-			dir->fstat->st_rdev & 0xFFFFF, ft_6month(dir) + 4, dir->name);
+		ft_printf("%3d, %3d %s %s%s%s", major(dir->fstat->st_rdev),\
+			minor(dir->fstat->st_rdev), ft_6month(dir) + 4,\
+			ft_colorize(perms, options), dir->name, C_EOC);
 	else
-		ft_printf("%*d %s %s", max_len[3], dir->fstat->st_size,\
-			ft_6month(dir) + 4, dir->name);
+		ft_printf("%*d %s %s%s%s", max_len[3], dir->fstat->st_size,\
+			ft_6month(dir) + 4, ft_colorize(perms, options), dir->name, C_EOC);
 	if (S_ISLNK(dir->fstat->st_mode))
 	{
 		if ((len = readlink(dir->full, buff, sizeof(buff)-1)) != -1)
@@ -86,4 +60,5 @@ void	ft_ldisplay(t_dir *dir, int *max_len, unsigned char options)
 		ft_printf(" -> %s", buff);
 	}
 	ft_printf("\n");
+	ft_print_xattr_acl(dir->full, &storage, options, S_ISDIR(dir->fstat->st_mode));
 }

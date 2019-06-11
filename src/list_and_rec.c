@@ -12,7 +12,7 @@
 
 #include "list_and_rec.h"
 
-static void	ft_printdir(DIR *dirp, t_dir *current, const unsigned char options)
+static void	ft_printdir(DIR *dirp, t_dir *current, const unsigned int options)
 {
 	struct	dirent	*dir;
 	t_list			*dir_to_rec;
@@ -40,7 +40,7 @@ static void	ft_printdir(DIR *dirp, t_dir *current, const unsigned char options)
 	ft_del_tdir(current);
 }
 
-void		ft_list_and_rec(t_list *lst_dir, unsigned char options,\
+void		ft_list_and_rec(t_list *lst_dir, unsigned int options,\
 				t_bool header)
 {
 	DIR		*dirp;

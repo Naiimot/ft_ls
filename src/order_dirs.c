@@ -13,7 +13,7 @@
 #include "order_dirs.h"
 
 static t_bool	ft_st_mtime_equal(t_dir *head, t_dir new,\
-					const unsigned char options)
+					const unsigned int options)
 {
 	if (head->fstat->st_mtimespec.tv_nsec == new.fstat->st_mtimespec.tv_nsec\
 		&& (((options & 8) == 0 && ft_strcmp(head->full, new.full) > 0)\
@@ -26,7 +26,7 @@ static t_bool	ft_st_mtime_equal(t_dir *head, t_dir new,\
 	return (FALSE);
 }
 
-static void		by_lmt(t_list **lst, t_dir dir, const unsigned char options)
+static void		by_lmt(t_list **lst, t_dir dir, const unsigned int options)
 {
 	t_list		*h;
 
@@ -51,7 +51,7 @@ static void		by_lmt(t_list **lst, t_dir dir, const unsigned char options)
 	free(h);
 }
 
-static void	by_alpha(t_list **lst, t_dir dir, const unsigned char options)
+static void	by_alpha(t_list **lst, t_dir dir, const unsigned int options)
 {
 	t_list		*h;
 
@@ -72,9 +72,9 @@ static void	by_alpha(t_list **lst, t_dir dir, const unsigned char options)
 	free(h);
 }
 
-void	ft_insert_dir(t_list **lst, t_dir dir, const unsigned char options)
+void	ft_insert_dir(t_list **lst, t_dir dir, const unsigned int options)
 {
-	void (*pf[2])(t_list **lst, t_dir dir, const unsigned char options);
+	void (*pf[2])(t_list **lst, t_dir dir, const unsigned int options);
 
 	if (*lst == NULL)
 		ft_lstadd(lst, ft_lstnew(&dir, sizeof(t_dir)));

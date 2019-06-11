@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include "../../inc/ft_printf.h"
 
-int g_fd = 1;
+int	g_fd = 1;
 
 /*
 ** The two substitutes functions are in reality the same.
