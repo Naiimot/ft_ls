@@ -29,13 +29,13 @@ static char	*ft_get_only_name(char *str)
 		return (&str[last_slash_pos + 1]);
 }
 
-t_dir		ft_gen_tdir(char *path, char *name)
+static t_dir		ft_gen_tdir(char *path, char *name)
 {
 	t_dir	new;
 	
 	new.name = ft_strdup(ft_get_only_name(name));
 	if (path == NULL)
-		new.full = ft_strdup(name);
+		new.full = ft_strdup(ft_get_only_name(name));
 	else
 	{
 		if (ft_strequ(path, "/") == 1)
@@ -43,8 +43,7 @@ t_dir		ft_gen_tdir(char *path, char *name)
 		else
 			new.full = ft_strjoinsep(path, name, '/');
 	}
-	if (!(new.fstat = (struct stat*)malloc(sizeof(struct stat))))
-		return (new);
+	new.fstat = (struct stat*)malloc(sizeof(struct stat));
 	return (new);
 }
 

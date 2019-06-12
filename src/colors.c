@@ -2,7 +2,7 @@
 
 char	*ft_colorize(char *perms, unsigned int options)
 {
-	if ((options & 1 << 7) == 1 << 7)
+	if ((options & OPT_COLOR) == OPT_COLOR)
 	{
 		if (perms[0] == '-')
 		{

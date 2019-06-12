@@ -1,6 +1,8 @@
 #ifndef COLORS_H
 # define COLORS_H
 
+# include "ft_ls.h"
+
 # define C_REGULAR		"\033[37m"
 # define C_EXEC			"\033[31m"
 # define C_DIR			"\033[1;36m"

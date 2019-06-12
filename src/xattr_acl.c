@@ -23,13 +23,13 @@ void		ft_print_xattr_acl(const char *path, t_xattr_acl *storage,\
 {
 	char	buff[storage->sxattr];
 
-	if ((options & 32) == 32 && storage->sxattr > 0)
+	if ((options & OPT_XATTR) == OPT_XATTR && storage->sxattr > 0)
 	{
 		if (storage->sxattr == listxattr(path, buff, storage->sxattr,\
 			XATTR_NOFOLLOW))
 			ft_pxattr(path, buff, storage->sxattr);
 	}
-	if ((options & 64) == 64 && storage->acl != NULL)
+	if ((options & OPT_ACL) == OPT_ACL && storage->acl != NULL)
 		ft_pacl(storage->acl, isdir);
 	acl_free(storage->acl);
 }

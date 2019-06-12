@@ -6,7 +6,7 @@
 # include <sys/types.h> 
 # include <sys/stat.h> 
 
-# define VALID_OPTIONS "Ralrt@eG"
+# define VALID_OPTIONS "Ralrt@eGfugdcS"
 
 t_dir	ft_gen_tdir(char *path, char *name);
 t_bool	ft_fill_fstat(t_dir *tmp, char *path, char *name);

@@ -21,28 +21,41 @@ static int	ft_store_options(int ac, char **av, unsigned int *options,\
 	i = 1;
 	while (i < ac && av[i][0] == '-')
 	{
+		if (ft_strcmp(av[i], "--") == 0)
+			return (i + 1);
 		j = 0;
 		while (av[i][++j])
 		{
 			if (ft_strchr(VALID_OPTIONS, av[i][j]) == NULL)
 				*ret = av[i][j];
 			if (av[i][j] == 'R')
-				*options = *options | 1 << 0;
+				*options = *options | OPT_REC;
 			else if (av[i][j] == 'a')
-				*options = *options | 1 << 1;
+				*options = *options | OPT_ALL;
 			else if (av[i][j] == 'l')
-				*options = *options | 1 << 2;
+				*options = *options | OPT_LONG;
+			else if (av[i][j] == 'f')
+				*options = *options | OPT_NOSORT | OPT_ALL;
 			else if (av[i][j] == 'r')
-				*options = *options | 1 << 3;
+				*options = *options | OPT_REV;
+			else if (av[i][j] == 'S')
+				*options = *options | OPT_SIZESORT;
 			else if (av[i][j] == 't')
-				*options = *options | 1 << 4;
+				*options = *options | OPT_MTIME;
+			else if (av[i][j] == 'u')
+				*options = *options | OPT_ATIME;
+			else if (av[i][j] == 'c')
+				*options = *options | OPT_CTIME;
 			else if (av[i][j] == '@')
-				*options = *options | 1 << 5;
+				*options = *options | OPT_XATTR;
 			else if (av[i][j] == 'e')
-				*options = *options | 1 << 6;
+				*options = *options | OPT_ACL;
 			else if (av[i][j] == 'G')
-				*options = *options | 1 << 7;
-
+				*options = *options | OPT_COLOR;
+			else if (av[i][j] == 'g')
+				*options = *options | OPT_LONG | OPT_ONLYGRP;
+			else if (av[i][j] == 'd')
+				*options = *options | OPT_NORECDIR | OPT_ALL;
 		}
 		i++;
 	}
@@ -87,13 +100,15 @@ int				main(int ac, char **av)
 	if ((i = ft_handle_options(ac, av, &options)) == -1)
 			return (-1);
 	ft_bzero(tab_lst, sizeof(t_list*) * 2);
-	if (i == ac)
-		ft_insert_dir(&tab_lst[1], ft_gen_tdir(NULL, "."), options);
+	if (i == ac && ft_fill_fstat(&tmp, NULL, ".") == TRUE)
+		ft_insert_dir((options & OPT_NORECDIR) ? &tab_lst[0] : &tab_lst[1],\
+			tmp, options);
 	else
 		while (i < ac)
 			if (ft_fill_fstat(&tmp, NULL, av[i++]) == TRUE) 
-				ft_insert_dir((S_ISDIR(tmp.fstat->st_mode)) ?\
-					&tab_lst[1] : &tab_lst[0], tmp, options);
+				ft_insert_dir((!(options & OPT_NORECDIR)\
+					&& S_ISDIR(tmp.fstat->st_mode)) ?&tab_lst[1] : &tab_lst[0],\
+					tmp, options);
 	ft_print_file_and_dir(tab_lst, options);
 	return (0);
 }
