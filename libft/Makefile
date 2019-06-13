@@ -34,7 +34,7 @@ SRC := ft_atoi.c			ft_memmove.c				ft_strequ.c\
 	ft_lstclearifdata.c	ft_putstr.c					ft_strnew.c\
 	ft_lstdel.c			ft_putstr_fd.c				ft_strnstr.c\
 	ft_lstdelcontent.c	ft_pwd.c					ft_strrchr.c\
-	ft_lstdelone.c		ft_pwd_uint64.c				ft_strremend.c\
+	ft_lstdelone.c		ft_strremend.c\
 	ft_lstiter.c		ft_sqrt.c					ft_strrev.c\
 	ft_lstlen.c			ft_strcat.c					ft_strsplit.c\
 	ft_lstmap.c			ft_strcdup.c				ft_strsplit_lst.c\

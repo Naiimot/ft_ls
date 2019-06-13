@@ -180,6 +180,7 @@ void				ft_pwd_hint(t_hint *result, int n, int pow);
 t_bool				ft_hint_difzero(t_hint const *n);
 char				ft_div_hint(t_hint *remainer, const t_hint *dividend, \
 						t_hint const *divisor);
+uint64_t			ft_pwd_uint64(uint64_t n, int pow);
 
 /*
 **	Manipulation of those custom variables.

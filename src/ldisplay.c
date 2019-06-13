@@ -56,8 +56,8 @@ void	ft_ldisplay(t_dir *dir, int *max_len, char *perms, unsigned int options)
 		max_len[1], (options & OPT_ONLYGRP) ?  "" : owner->pw_name,\
 		max_len[2], group->gr_name);
 	if (perms[0] == 'c')
-		ft_printf("%3d, %3d %s %s%s%s", major(dir->fstat->st_rdev),\
-			minor(dir->fstat->st_rdev), ft_6month(dir, options) + 4,\
+		ft_printf("%3d, %3d %s %s%s%s", dir->fstat->st_rdev >> 24 & 0xff,\
+		dir->fstat->st_rdev & 0xffffff, ft_6month(dir, options) + 4,\
 			ft_colorize(perms, options), dir->name, C_EOC);
 	else
 		ft_printf("%*d %s %s%s%s", max_len[3], dir->fstat->st_size,\

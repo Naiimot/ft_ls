@@ -1,7 +1,5 @@
 #include "xattr_acl.h"
 
-#include <unistd.h>
-
 static void		ft_pxattr(const char *path, char *buff, ssize_t size)
 {
 	ssize_t i;

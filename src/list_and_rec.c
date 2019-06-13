@@ -23,13 +23,13 @@ static void	ft_printdir(DIR *dirp, t_dir *current, const unsigned int options)
 	dir_to_disp = NULL;
 	while ((dir = readdir(dirp)) != NULL)
 	{
-		if ((options & OPT_ALL) == OPT_ALL || dir->d_name[0] != '.')
+		if ((options & OPT_ALL) || dir->d_name[0] != '.')
 			if (ft_fill_fstat(&tmp, current->full, dir->d_name) == TRUE)
 				ft_insert_dir(&dir_to_disp, tmp, options);
-		if ((options & OPT_REC) == OPT_REC && dir->d_type == DT_DIR\
+		if ((options & OPT_REC) && dir->d_type == DT_DIR\
 			&& ((ft_strequ(dir->d_name, ".") == 0\
 			&& ft_strequ(dir->d_name, "..") == 0)\
-			&& ((options & OPT_ALL) == OPT_ALL || dir->d_name[0] != '.')))
+			&& ((options & OPT_ALL) || dir->d_name[0] != '.')))
 				if (ft_fill_fstat(&tmp, current->full, dir->d_name) == TRUE)
 					ft_insert_dir(&dir_to_rec, tmp, options);
 	}

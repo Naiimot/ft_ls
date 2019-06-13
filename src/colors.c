@@ -1,8 +1,24 @@
 #include "colors.h"
 
-char	*ft_colorize(char *perms, unsigned int options)
+static char	*ft_colorize_2(char c)
 {
-	if ((options & OPT_COLOR) == OPT_COLOR)
+	if (c == 'c')
+		return (C_CPERIPH);
+	else if (c == 'b')
+		return (C_BPERIPH);
+	else if (c == 'l')
+		return (C_SLINK);
+	else if (c == 'p')
+		return (C_PIPE);
+	else if (c == 's')
+		return (C_SOCKET);
+	else
+		return (C_REGULAR);
+}
+
+char		*ft_colorize(char *perms, unsigned int options)
+{
+	if (options & OPT_COLOR)
 	{
 		if (perms[0] == '-')
 		{
@@ -22,16 +38,8 @@ char	*ft_colorize(char *perms, unsigned int options)
 			else
 				return (C_DIR);
 		}
-		else if (perms[0] == 'c')
-			return (C_CPERIPH);
-		else if (perms[0] == 'b')
-			return (C_BPERIPH);
-		else if (perms[0] == 'l')
-			return (C_SLINK);
-		else if (perms[0] == 'p')
-			return (C_PIPE);
-		else if (perms[0] == 's')
-			return (C_SOCKET);
+		else
+			return (ft_colorize_2(perms[0]));
 	}
 	else
 		return (C_REGULAR);

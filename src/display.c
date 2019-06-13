@@ -54,13 +54,30 @@ static void	ft_get_perms(struct stat *fstat, char *perms)
 	perms[10] = '\0';
 }
 
+static void	ft_get_field_sizes_2(struct stat *fstat, int *field_sizes,\
+				unsigned int options)
+{
+	struct passwd	*owner;
+	struct group	*group;
+	int				tmp;
+
+	owner = getpwuid(fstat->st_uid);
+	group = getgrgid(fstat->st_gid);
+	if ((tmp = ft_lenint_base(fstat->st_nlink, 10)) > field_sizes[0])
+		field_sizes[0] = tmp;
+	if (!(options & OPT_ONLYGRP)\
+		&& (tmp = ft_strlen(owner->pw_name)) > field_sizes[1])
+		field_sizes[1] = tmp;
+	if ((tmp = ft_strlen(group->gr_name)) > field_sizes[2])
+		field_sizes[2] = tmp;
+	if ((tmp = ft_lenint_base(fstat->st_size, 10)) > field_sizes[3])
+		field_sizes[3] = tmp;
+}
+
 static void	ft_get_field_sizes(t_list *lst, int *field_sizes,\
 				unsigned int options)
 {
-	t_list			*h;
-	struct passwd	*owner;
-	struct group	*group;
-	int	tmp;
+	t_list	*h;
 
 	h = lst;
 	ft_bzero(field_sizes, sizeof(int) * 5);
@@ -68,20 +85,8 @@ static void	ft_get_field_sizes(t_list *lst, int *field_sizes,\
 	{
 		field_sizes[4] += ((t_dir*)h->content)->fstat->st_blocks;
 		if (options & OPT_LONG)
-		{
-			owner = getpwuid(((t_dir*)h->content)->fstat->st_uid);
-			group = getgrgid(((t_dir*)h->content)->fstat->st_gid);
-			if ((tmp = ft_lenint_base(((t_dir*)h->content)->fstat->st_nlink, 10)) > field_sizes[0])
-				field_sizes[0] = tmp;
-			if ((options & OPT_ONLYGRP) == 0\
-				&& (tmp = ft_strlen(owner->pw_name)) > field_sizes[1])
-				field_sizes[1] = tmp;
-			if ((tmp = ft_strlen(group->gr_name)) > field_sizes[2])
-				field_sizes[2] = tmp;
-			if ((tmp = ft_lenint_base(((t_dir*)h->content)->fstat->st_size, 10))\
-				> field_sizes[3])
-				field_sizes[3] = tmp;
-		}
+			ft_get_field_sizes_2(((t_dir*)h->content)->fstat, field_sizes,\
+				options);
 		h = h->next;
 	}
 	field_sizes[0] += 1;
@@ -97,16 +102,15 @@ void		ft_display(t_list *lst, unsigned int options, t_bool dirs)
 	char	perms[11];
 
 	ft_get_field_sizes(lst, field_sizes, options);
-	if ((options & OPT_LONG) == OPT_LONG && dirs == TRUE)
+	if ((options & OPT_LONG) && dirs == TRUE)
 		ft_printf("total %d\n", field_sizes[4]);
 	head = lst;
 	while (head)
 	{
 		ft_get_perms(((t_dir*)head->content)->fstat, perms);
-		if ((options & OPT_ALL) == OPT_ALL\
-			|| ((t_dir*)head->content)->name[0] != '.')
+		if ((options & OPT_ALL) || ((t_dir*)head->content)->name[0] != '.')
 		{
-			if ((options & OPT_LONG) == OPT_LONG)
+			if (options & OPT_LONG)
 				ft_ldisplay(head->content, field_sizes, perms,  options);
 			else
 				ft_printf("%s%s%s\n", ft_colorize(perms, options),\

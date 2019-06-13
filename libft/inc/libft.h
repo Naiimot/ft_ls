@@ -14,7 +14,6 @@
 # define LIBFT_H
 
 # include <stdlib.h>
-# include <stdint.h>
 
 # define BUFF_SIZE 128
 
@@ -87,7 +86,6 @@ char			*ft_strcdup(const char *s1, char c);
 int				ft_strclen(const char *s, const char c);
 int				ft_sqrt(int n);
 int				ft_pwd(int n, int pow);
-uint64_t		ft_pwd_uint64(uint64_t n, int pow);
 unsigned short	ft_lenint_base(int n, unsigned short const b);
 void			ft_print_words_tables(const char **tab);
 typedef struct	s_list

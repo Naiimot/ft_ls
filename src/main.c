@@ -12,6 +12,30 @@
 
 #include "main.h"
 
+static void	ft_store_options_2(char c, unsigned int *options)
+{
+	if (c == 'r')
+		*options = *options | OPT_REV;
+	else if (c == 'S')
+		*options = *options | OPT_SIZESORT;
+	else if (c == 't')
+		*options = *options | OPT_MTIME;
+	else if (c == 'u')
+		*options = *options | OPT_ATIME;
+	else if (c == 'c')
+		*options = *options | OPT_CTIME;
+	else if (c == '@')
+		*options = *options | OPT_XATTR;
+	else if (c == 'e')
+		*options = *options | OPT_ACL;
+	else if (c == 'G')
+		*options = *options | OPT_COLOR;
+	else if (c == 'g')
+		*options = *options | OPT_LONG | OPT_ONLYGRP;
+	else if (c == 'd')
+		*options = *options | OPT_NORECDIR | OPT_ALL;
+}
+
 static int	ft_store_options(int ac, char **av, unsigned int *options,\
 				char *ret)
 {
@@ -36,26 +60,8 @@ static int	ft_store_options(int ac, char **av, unsigned int *options,\
 				*options = *options | OPT_LONG;
 			else if (av[i][j] == 'f')
 				*options = *options | OPT_NOSORT | OPT_ALL;
-			else if (av[i][j] == 'r')
-				*options = *options | OPT_REV;
-			else if (av[i][j] == 'S')
-				*options = *options | OPT_SIZESORT;
-			else if (av[i][j] == 't')
-				*options = *options | OPT_MTIME;
-			else if (av[i][j] == 'u')
-				*options = *options | OPT_ATIME;
-			else if (av[i][j] == 'c')
-				*options = *options | OPT_CTIME;
-			else if (av[i][j] == '@')
-				*options = *options | OPT_XATTR;
-			else if (av[i][j] == 'e')
-				*options = *options | OPT_ACL;
-			else if (av[i][j] == 'G')
-				*options = *options | OPT_COLOR;
-			else if (av[i][j] == 'g')
-				*options = *options | OPT_LONG | OPT_ONLYGRP;
-			else if (av[i][j] == 'd')
-				*options = *options | OPT_NORECDIR | OPT_ALL;
+			else
+				ft_store_options_2(av[i][j], options);
 		}
 		i++;
 	}
@@ -107,8 +113,8 @@ int				main(int ac, char **av)
 		while (i < ac)
 			if (ft_fill_fstat(&tmp, NULL, av[i++]) == TRUE) 
 				ft_insert_dir((!(options & OPT_NORECDIR)\
-					&& S_ISDIR(tmp.fstat->st_mode)) ?&tab_lst[1] : &tab_lst[0],\
-					tmp, options);
+					&& S_ISDIR(tmp.fstat->st_mode)) ?\
+					&tab_lst[1] : &tab_lst[0], tmp, options);
 	ft_print_file_and_dir(tab_lst, options);
 	return (0);
 }
