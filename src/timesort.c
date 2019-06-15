@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   timesort.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/15 16:11:58 by tdelabro          #+#    #+#             */
+/*   Updated: 2019/06/15 16:12:45 by tdelabro         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "order_dirs.h"
 
 static t_bool	ft_cmpn(long head_time, long new_time, int rev, int cmp)
 {
 	if (head_time == new_time\
-		&& ((rev == 0  && cmp > 0) || (rev == OPT_REV && cmp < 0)))
+		&& ((rev == 0 && cmp > 0) || (rev == OPT_REV && cmp < 0)))
 		return (TRUE);
 	else if ((rev == 0 && head_time < new_time)\
 		|| (rev == OPT_REV && head_time > new_time))
@@ -12,7 +24,7 @@ static t_bool	ft_cmpn(long head_time, long new_time, int rev, int cmp)
 		return (FALSE);
 }
 
-void		by_lmt(t_list **lst, t_dir dir, const unsigned int options)
+void			by_lmt(t_list **lst, t_dir dir, const unsigned int options)
 {
 	t_list		*h;
 	int			sdf;
@@ -38,7 +50,7 @@ void		by_lmt(t_list **lst, t_dir dir, const unsigned int options)
 	free(h);
 }
 
-void		by_lat(t_list **lst, t_dir dir, const unsigned int options)
+void			by_lat(t_list **lst, t_dir dir, const unsigned int options)
 {
 	t_list		*h;
 	int			sdf;
@@ -64,7 +76,7 @@ void		by_lat(t_list **lst, t_dir dir, const unsigned int options)
 	free(h);
 }
 
-void		by_lct(t_list **lst, t_dir dir, const unsigned int options)
+void			by_lct(t_list **lst, t_dir dir, const unsigned int options)
 {
 	t_list		*h;
 	int			sdf;

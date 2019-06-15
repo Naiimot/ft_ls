@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 16:30:05 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/02 23:16:15 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/15 16:08:54 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,19 @@
 static void	ft_get_type(struct stat *fstat, char *perms)
 {
 	if (S_ISREG(fstat->st_mode))
-		perms[0] ='-';
+		perms[0] = '-';
 	else if (S_ISDIR(fstat->st_mode))
-		perms[0] ='d';
+		perms[0] = 'd';
 	else if (S_ISCHR(fstat->st_mode))
-		perms[0] ='c';
+		perms[0] = 'c';
 	else if (S_ISBLK(fstat->st_mode))
-		perms[0] ='b';
+		perms[0] = 'b';
 	else if (S_ISLNK(fstat->st_mode))
-		perms[0] ='l';
+		perms[0] = 'l';
 	else if (S_ISFIFO(fstat->st_mode))
-		perms[0] ='p';
+		perms[0] = 'p';
 	else if (S_ISSOCK(fstat->st_mode))
-		perms[0] ='s';
+		perms[0] = 's';
 }
 
 static void	ft_get_perms(struct stat *fstat, char *perms)
@@ -102,7 +102,7 @@ void		ft_display(t_list *lst, unsigned int options, t_bool dirs)
 	char	perms[11];
 
 	ft_get_field_sizes(lst, field_sizes, options);
-	if ((options & OPT_LONG) && dirs == TRUE)
+	if ((options & OPT_LONG) && dirs == TRUE && ft_lstlen(lst) > 2)
 		ft_printf("total %d\n", field_sizes[4]);
 	head = lst;
 	while (head)
@@ -111,7 +111,7 @@ void		ft_display(t_list *lst, unsigned int options, t_bool dirs)
 		if ((options & OPT_ALL) || ((t_dir*)head->content)->name[0] != '.')
 		{
 			if (options & OPT_LONG)
-				ft_ldisplay(head->content, field_sizes, perms,  options);
+				ft_ldisplay(head->content, field_sizes, perms, options);
 			else
 				ft_printf("%s%s%s\n", ft_colorize(perms, options),\
 					((t_dir*)head->content)->name, C_EOC);

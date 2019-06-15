@@ -1,24 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   list_and_rec.h		                                :+:      :+:    :+:   */
+/*   list_and_rec.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/05/23 16:55:11 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/05/27 21:25:56 by tdelabro         ###   ########.fr       */
+/*   Created: 2019/06/15 16:16:43 by tdelabro          #+#    #+#             */
+/*   Updated: 2019/06/15 16:16:45 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIST_AND_REC_H
-
 # define LIST_AND_REC_H
 
 # include "libft.h"
 # include "ft_printf.h"
 # include "ft_ls.h"
-# include <sys/types.h> 
-# include <sys/stat.h> 
+# include <sys/types.h>
+# include <sys/stat.h>
 # include <errno.h>
 # include <string.h>
 # include <dirent.h>

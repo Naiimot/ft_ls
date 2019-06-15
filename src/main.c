@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/25 17:26:10 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/05/28 13:11:46 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/15 16:17:46 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 static void	ft_store_options_2(char c, unsigned int *options)
 {
-	if (c == 'r')
+	if (c == 'f')
+		*options = *options | OPT_NOSORT | OPT_ALL;
+	else if (c == 'r')
 		*options = *options | OPT_REV;
 	else if (c == 'S')
 		*options = *options | OPT_SIZESORT;
@@ -58,8 +60,6 @@ static int	ft_store_options(int ac, char **av, unsigned int *options,\
 				*options = *options | OPT_ALL;
 			else if (av[i][j] == 'l')
 				*options = *options | OPT_LONG;
-			else if (av[i][j] == 'f')
-				*options = *options | OPT_NOSORT | OPT_ALL;
 			else
 				ft_store_options_2(av[i][j], options);
 		}
@@ -76,7 +76,7 @@ static int	ft_handle_options(int ac, char **av, unsigned int *options)
 	*options = 0;
 	c = '\0';
 	i = ft_store_options(ac, av, options, &c);
-	if (c  != '\0')
+	if (c != '\0')
 	{
 		ft_dprintf(2, "ls: illegal option -- %c\nusage: ls [-%s] [file ...]\n",\
 			c, VALID_OPTIONS);
@@ -96,7 +96,7 @@ static void	ft_print_file_and_dir(t_list **tab_lst, unsigned int options)
 	ft_list_and_rec(tab_lst[1], options, flistexist);
 }
 
-int				main(int ac, char **av)
+int			main(int ac, char **av)
 {
 	unsigned int	options;
 	t_list			*tab_lst[2];
@@ -104,14 +104,14 @@ int				main(int ac, char **av)
 	t_dir			tmp;
 
 	if ((i = ft_handle_options(ac, av, &options)) == -1)
-			return (-1);
+		return (-1);
 	ft_bzero(tab_lst, sizeof(t_list*) * 2);
 	if (i == ac && ft_fill_fstat(&tmp, NULL, ".") == TRUE)
 		ft_insert_dir((options & OPT_NORECDIR) ? &tab_lst[0] : &tab_lst[1],\
 			tmp, options);
 	else
 		while (i < ac)
-			if (ft_fill_fstat(&tmp, NULL, av[i++]) == TRUE) 
+			if (ft_fill_fstat(&tmp, NULL, av[i++]) == TRUE)
 				ft_insert_dir((!(options & OPT_NORECDIR)\
 					&& S_ISDIR(tmp.fstat->st_mode)) ?\
 					&tab_lst[1] : &tab_lst[0], tmp, options);

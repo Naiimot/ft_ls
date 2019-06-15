@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/25 17:26:31 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/05/28 13:11:37 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/15 15:50:56 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	ft_printdir(DIR *dirp, t_dir *current, const unsigned int options)
 {
-	struct	dirent	*dir;
+	struct dirent	*dir;
 	t_list			*dir_to_rec;
 	t_list			*dir_to_disp;
 	t_dir			tmp;
@@ -30,8 +30,8 @@ static void	ft_printdir(DIR *dirp, t_dir *current, const unsigned int options)
 			&& ((ft_strequ(dir->d_name, ".") == 0\
 			&& ft_strequ(dir->d_name, "..") == 0)\
 			&& ((options & OPT_ALL) || dir->d_name[0] != '.')))
-				if (ft_fill_fstat(&tmp, current->full, dir->d_name) == TRUE)
-					ft_insert_dir(&dir_to_rec, tmp, options);
+			if (ft_fill_fstat(&tmp, current->full, dir->d_name) == TRUE)
+				ft_insert_dir(&dir_to_rec, tmp, options);
 	}
 	closedir(dirp);
 	ft_display(dir_to_disp, options, TRUE);

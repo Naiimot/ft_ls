@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/15 16:16:02 by tdelabro          #+#    #+#             */
+/*   Updated: 2019/06/15 16:16:10 by tdelabro         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MAIN_H
 # define MAIN_H
 
 # include "ft_ls.h"
 # include "ft_printf.h"
-# include <sys/types.h> 
-# include <sys/stat.h> 
+# include <sys/types.h>
+# include <sys/stat.h>
 
 # define VALID_OPTIONS "Ralrt@eGfugdcS"
 

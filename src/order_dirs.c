@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 16:29:28 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/05/28 13:11:58 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/15 16:01:37 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	by_size(t_list **lst, t_dir dir, const unsigned int options)
 	{
 		df = ((t_dir*)h->next->content)->fstat->st_size - dir.fstat->st_size;
 		if ((!(options & OPT_REV) && df < 0) || ((options & OPT_REV) && df > 0))
-			break;
+			break ;
 		h = h->next;
 	}
 	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
@@ -35,7 +35,7 @@ static void	by_size(t_list **lst, t_dir dir, const unsigned int options)
 static void	by_alpha(t_list **lst, t_dir dir, const unsigned int options)
 {
 	t_list	*h;
-	int		df;	
+	int		df;
 
 	ft_lstadd(lst, ft_lstnew(NULL, 0));
 	h = *lst;
@@ -43,7 +43,7 @@ static void	by_alpha(t_list **lst, t_dir dir, const unsigned int options)
 	{
 		df = ft_strcmp(((t_dir*)h->next->content)->full, dir.full);
 		if ((!(options & OPT_REV) && df > 0) || ((options & OPT_REV) && df < 0))
-			break;
+			break ;
 		h = h->next;
 	}
 	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
@@ -52,7 +52,7 @@ static void	by_alpha(t_list **lst, t_dir dir, const unsigned int options)
 	free(h);
 }
 
-void	ft_insert_dir(t_list **lst, t_dir dir, const unsigned int options)
+void		ft_insert_dir(t_list **lst, t_dir dir, const unsigned int options)
 {
 	void (*pf[5])(t_list **lst, t_dir dir, const unsigned int options);
 

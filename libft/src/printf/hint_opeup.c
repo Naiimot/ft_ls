@@ -6,13 +6,13 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/23 19:58:05 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/02/20 15:18:00 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/15 16:22:05 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/ft_printf.h"
 
-uint64_t		ft_pwd_uint64(uint64_t n, int pow)
+uint64_t	ft_pwd_uint64(uint64_t n, int pow)
 {
 	uint64_t	res;
 

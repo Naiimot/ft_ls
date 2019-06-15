@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   acl.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/15 16:01:55 by tdelabro          #+#    #+#             */
+/*   Updated: 2019/06/15 16:07:11 by tdelabro         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "acl.h"
 
-static void	ft_get_name(id_t id, int type, char	**to_print)
+static void		ft_get_name(id_t id, int type, char **to_print)
 {
 	struct passwd	*pwd;
 	struct group	*grp;
-	
+
 	if (type == ID_TYPE_UID)
 	{
 		to_print[0] = "user";
@@ -26,9 +38,8 @@ static void	ft_get_name(id_t id, int type, char	**to_print)
 	}
 }
 
-
-static void ft_print_perms(acl_entry_t entry, t_bool isdir,\
-				char *specific[2][6], char **all)
+static t_bool	ft_print_perms(acl_entry_t entry, t_bool isdir,\
+					char *specific[2][6], char **all)
 {
 	acl_permset_t	permset;
 	int				i;
@@ -37,7 +48,7 @@ static void ft_print_perms(acl_entry_t entry, t_bool isdir,\
 	first = TRUE;
 	i = 1;
 	if (acl_get_permset(entry, &permset) != 0)
-		return ;
+		return (first);
 	while (i < 14)
 	{
 		if (acl_get_perm_np(permset, 1 << i) == 1)
@@ -54,10 +65,39 @@ static void ft_print_perms(acl_entry_t entry, t_bool isdir,\
 		}
 		i++;
 	}
-	ft_printf("%c", '\n');
+	return (first);
 }
 
-static void	ft_get_perms(acl_entry_t entry, t_bool isdir)
+static void		ft_print_inheritance(acl_entry_t entry, t_bool first)
+{
+	acl_flagset_t	flagset;
+	int				i;
+
+	if (acl_get_flagset_np(entry, &flagset) == 0)
+	{
+		i = 4;
+		while (++i < 9)
+		{
+			if (acl_get_flag_np(flagset, 1 << i))
+			{
+				if (first == TRUE)
+					first = FALSE;
+				else
+					ft_printf("%c", ',');
+				if (i == 5)
+					ft_printf("%s", "file_inherit");
+				else if (i == 6)
+					ft_printf("%s", "directory_inherit");
+				else if (i == 7)
+					ft_printf("%s", "limit_inherit");
+				else if (i == 8)
+					ft_printf("%s", "only_inherit");
+			}
+		}
+	}
+}
+
+static void		ft_get_perms(acl_entry_t entry, t_bool isdir)
 {
 	char	*specific[2][6];
 	char	*all[7];
@@ -80,36 +120,21 @@ static void	ft_get_perms(acl_entry_t entry, t_bool isdir)
 	all[4] = "readsecurity";
 	all[5] = "writesecurity";
 	all[6] = "chown";
-	ft_print_perms(entry, isdir, specific, all);
+	ft_print_inheritance(entry, ft_print_perms(entry, isdir, specific, all));
+	ft_printf("\n");
 }
 
-void print_bytes(void *ptr, int size) 
-{
-    unsigned char *p = ptr;
-    int i;
-    for (i=0; i<size; i++) {
-        ft_printf("%02hhX ", p[i]);
-    }
-    ft_printf("\n");
-}
-
-static void	ft_print_entry(acl_entry_t entry, int i, t_bool isdir)
+void			ft_print_entry(acl_entry_t entry, int i, t_bool isdir)
 {
 	acl_tag_t	tag;
 	uuid_t		*uu;
 	char		*to_print[4];
-//	id_t		id;
-//	int			id_type;
-	
+	id_t		id;
+	int			id_type;
+
 	uu = acl_get_qualifier(entry);
-	print_bytes(entry, sizeof(entry));
-/*	if (ft_uuid_to_id(*uu, &id, &id_type) == 0)
-		ft_get_name(id, id_type, to_print);
-	else
-	{
-		to_print[0] = "???";
-		to_print[1] = "unknown";
-	}*/
+	mbr_uuid_to_id(*uu, &id, &id_type);
+	ft_get_name(id, id_type, to_print);
 	acl_free(uu);
 	acl_get_tag_type(entry, &tag);
 	if (tag == ACL_EXTENDED_ALLOW)
@@ -118,21 +143,4 @@ static void	ft_print_entry(acl_entry_t entry, int i, t_bool isdir)
 		to_print[2] = "deny";
 	ft_printf(" %d: %s:%s %s ", i, to_print[0], to_print[1], to_print[2]);
 	ft_get_perms(entry, isdir);
-}
-
-void		ft_pacl(acl_t acl, t_bool isdir)
-{
-	acl_entry_t entry;
-	int			i;
-	
-	i = 0;
-	char	*txt = acl_to_text(acl, NULL);
-	ft_printf("%s", txt);
-	acl_free(txt);
-/*
-	if (acl_get_entry(acl, ACL_FIRST_ENTRY, &entry) != -1)
-		ft_print_entry(entry, i++, isdir);
-	while (acl_get_entry(acl, ACL_NEXT_ENTRY, &entry) != -1)
-		ft_print_entry(entry, i++, isdir);
-		*/
 }

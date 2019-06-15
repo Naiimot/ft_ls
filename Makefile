@@ -6,7 +6,7 @@
 #    By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/03/03 23:15:58 by tdelabro          #+#    #+#              #
-#    Updated: 2019/05/28 13:21:13 by tdelabro         ###   ########.fr        #
+#    Updated: 2019/06/15 16:21:10 by tdelabro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra 
 
 # sources
-SRC_NAME = timesort.c colors.c uuid_to_id.c acl.c xattr_acl.c t_dir.c ldisplay.c display.c main.c list_and_rec.c order_dirs.c
+SRC_NAME = timesort.c colors.c acl.c xattr_acl.c t_dir.c ldisplay.c display.c main.c list_and_rec.c order_dirs.c
 SRC_DIR = src/
 SRC = $(addprefix $(SRC_DIR), $(SRC_NAME))
 

@@ -1,13 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   t_dir.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/15 16:07:17 by tdelabro          #+#    #+#             */
+/*   Updated: 2019/06/15 16:08:06 by tdelabro         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "t_dir.h"
 
-void		ft_del_tdir(t_dir *dir)
+void			ft_del_tdir(t_dir *dir)
 {
 	free(dir->name);
 	free(dir->full);
 	free(dir->fstat);
 }
 
-static char	*ft_get_only_name(char *str)
+static char		*ft_get_only_name(char *str)
 {
 	int	i;
 	int	last_slash_pos;
@@ -21,6 +33,7 @@ static char	*ft_get_only_name(char *str)
 		return (str);
 	else if (str[last_slash_pos + 1] == '\0')
 	{
+		str[last_slash_pos] = '\0';
 		while (str[last_slash_pos - 1] != '/')
 			last_slash_pos--;
 		return (&str[last_slash_pos]);
@@ -29,10 +42,10 @@ static char	*ft_get_only_name(char *str)
 		return (&str[last_slash_pos + 1]);
 }
 
-static t_dir		ft_gen_tdir(char *path, char *name)
+static t_dir	ft_gen_tdir(char *path, char *name)
 {
 	t_dir	new;
-	
+
 	new.name = ft_strdup(ft_get_only_name(name));
 	if (path == NULL)
 		new.full = ft_strdup(ft_get_only_name(name));
@@ -47,7 +60,7 @@ static t_dir		ft_gen_tdir(char *path, char *name)
 	return (new);
 }
 
-t_bool		ft_fill_fstat(t_dir *tmp, char *path, char *name)
+t_bool			ft_fill_fstat(t_dir *tmp, char *path, char *name)
 {
 	*tmp = ft_gen_tdir(path, name);
 	if (lstat(tmp->full, tmp->fstat) == -1)

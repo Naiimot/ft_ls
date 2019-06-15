@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   colors.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/15 15:45:24 by tdelabro          #+#    #+#             */
+/*   Updated: 2019/06/15 15:46:35 by tdelabro         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "colors.h"
 
 static char	*ft_colorize_2(char c)
@@ -26,7 +38,7 @@ char		*ft_colorize(char *perms, unsigned int options)
 				return (C_USTICKY);
 			else if (perms[6] == 's')
 				return (C_GSTICKY);
-			else if (perms[3] == 'x' || perms[6] == 'x' || perms[9] == 'x' )
+			else if (perms[3] == 'x' || perms[6] == 'x' || perms[9] == 'x')
 				return (C_EXEC);
 			else
 				return (C_REGULAR);
