@@ -6,98 +6,101 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/15 16:11:58 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/15 16:12:45 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/16 23:39:51 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "order_dirs.h"
 
-static t_bool	ft_cmpn(long head_time, long new_time, int rev, int cmp)
+static t_bool	ft_cmpn(long head_time, long new_time, int rev)
 {
-	if (head_time == new_time\
-		&& ((rev == 0 && cmp > 0) || (rev == OPT_REV && cmp < 0)))
-		return (TRUE);
-	else if ((rev == 0 && head_time < new_time)\
+	if ((rev == 0 && head_time < new_time)\
 		|| (rev == OPT_REV && head_time > new_time))
 		return (TRUE);
 	else
 		return (FALSE);
 }
 
-void			by_lmt(t_list **lst, t_dir dir, const unsigned int options)
+void by_lmt(t_list **lst, t_list *new, const unsigned int options)
 {
-	t_list		*h;
-	int			sdf;
+	t_list	*head;
+	t_list	*prev;
+	int		df;
 
-	ft_lstadd(lst, ft_lstnew(NULL, 0));
-	h = *lst;
-	while (h->next)
+	head = *lst; 
+	prev = NULL;
+	while (head)
 	{
-		sdf = ((t_dir*)h->next->content)->fstat->st_mtime - dir.fstat->st_mtime;
-		if (sdf == 0\
-			&& ft_cmpn(((t_dir*)h->next->content)->fstat->st_mtimespec.tv_nsec,\
-			dir.fstat->st_mtimespec.tv_nsec, options & OPT_REV,\
-			ft_strcmp(((t_dir*)h->next->content)->full, dir.full)) == TRUE)
+			if (!(df = ((t_dir*)head->content)->fstat->st_mtime\
+			- ((t_dir*)new->content)->fstat->st_mtime)\
+			&& ft_cmpn(((t_dir*)head->content)->fstat->st_mtimespec.tv_nsec,\
+			((t_dir*)new->content)->fstat->st_mtimespec.tv_nsec,\
+			options & OPT_REV) == TRUE)
 			break ;
-		else if ((!(options & OPT_REV) && sdf < 0)\
-			|| ((options & OPT_REV) && sdf > 0))
+		else if (((options & OPT_REV) && df > 0)\
+			|| (!(options & OPT_REV) && df < 0))
 			break ;
-		h = h->next;
+		prev = head;
+		head = head->next;
 	}
-	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
-	h = *lst;
-	*lst = h->next;
-	free(h);
+	if (prev)
+		ft_lstinsert(prev, new);
+	else
+		ft_lstadd(lst, new);
 }
 
-void			by_lat(t_list **lst, t_dir dir, const unsigned int options)
+void by_lat(t_list **lst, t_list *new, const unsigned int options)
 {
-	t_list		*h;
-	int			sdf;
+	t_list	*head;
+	t_list	*prev;
+	int		df;
 
-	ft_lstadd(lst, ft_lstnew(NULL, 0));
-	h = *lst;
-	while (h->next)
+	head = *lst; 
+	prev = NULL;
+	while (head)
 	{
-		sdf = ((t_dir*)h->next->content)->fstat->st_atime - dir.fstat->st_atime;
-		if (sdf == 0\
-			&& ft_cmpn(((t_dir*)h->next->content)->fstat->st_atimespec.tv_nsec,\
-			dir.fstat->st_atimespec.tv_nsec, options & OPT_REV,\
-			ft_strcmp(((t_dir*)h->next->content)->full, dir.full)) == TRUE)
+			if (!(df = ((t_dir*)head->content)->fstat->st_atime\
+			- ((t_dir*)new->content)->fstat->st_atime)\
+			&& ft_cmpn(((t_dir*)head->content)->fstat->st_atimespec.tv_nsec,\
+			((t_dir*)new->content)->fstat->st_atimespec.tv_nsec,\
+			options & OPT_REV) == TRUE)
 			break ;
-		else if ((!(options & OPT_REV) && sdf < 0)\
-			|| ((options & OPT_REV) && sdf > 0))
+		else if (((options & OPT_REV) && df > 0)\
+			|| (!(options & OPT_REV) && df < 0))
 			break ;
-		h = h->next;
+		prev = head;
+		head = head->next;
 	}
-	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
-	h = *lst;
-	*lst = h->next;
-	free(h);
+	if (prev)
+		ft_lstinsert(prev, new);
+	else
+		ft_lstadd(lst, new);
 }
 
-void			by_lct(t_list **lst, t_dir dir, const unsigned int options)
+void by_lct(t_list **lst, t_list *new, const unsigned int options)
 {
-	t_list		*h;
-	int			sdf;
+	t_list	*head;
+	t_list	*prev;
+	int		df;
 
-	ft_lstadd(lst, ft_lstnew(NULL, 0));
-	h = *lst;
-	while (h->next)
+	head = *lst; 
+	prev = NULL;
+	while (head)
 	{
-		sdf = ((t_dir*)h->next->content)->fstat->st_ctime - dir.fstat->st_ctime;
-		if (sdf == 0\
-			&& ft_cmpn(((t_dir*)h->next->content)->fstat->st_ctimespec.tv_nsec,\
-			dir.fstat->st_ctimespec.tv_nsec, options & OPT_REV,\
-			ft_strcmp(((t_dir*)h->next->content)->full, dir.full)) == TRUE)
+			if (!(df = ((t_dir*)head->content)->fstat->st_ctime\
+			- ((t_dir*)new->content)->fstat->st_ctime)\
+			&& ft_cmpn(((t_dir*)head->content)->fstat->st_ctimespec.tv_nsec,\
+			((t_dir*)new->content)->fstat->st_ctimespec.tv_nsec,\
+			options & OPT_REV) == TRUE)
 			break ;
-		else if ((!(options & OPT_REV) && sdf < 0)\
-			|| ((options & OPT_REV) && sdf > 0))
+		else if (((options & OPT_REV) && df > 0)\
+			|| (!(options & OPT_REV) && df < 0))
 			break ;
-		h = h->next;
+		prev = head;
+		head = head->next;
 	}
-	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
-	h = *lst;
-	*lst = h->next;
-	free(h);
+	if (prev)
+		ft_lstinsert(prev, new);
+	else
+		ft_lstadd(lst, new);
 }

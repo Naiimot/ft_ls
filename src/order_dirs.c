@@ -6,77 +6,97 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 16:29:28 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/15 16:01:37 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/16 23:42:56 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "order_dirs.h"
 
-static void	by_size(t_list **lst, t_dir dir, const unsigned int options)
+void by_size(t_list **lst, t_list *current, const unsigned int options)
 {
-	t_list	*h;
+	t_list	*head;
+	t_list	*prev;
 	int		df;
 
-	ft_lstadd(lst, ft_lstnew(NULL, 0));
-	h = *lst;
-	while (h->next)
+	head = *lst; 
+	prev = NULL;
+	while (head)
 	{
-		df = ((t_dir*)h->next->content)->fstat->st_size - dir.fstat->st_size;
-		if ((!(options & OPT_REV) && df < 0) || ((options & OPT_REV) && df > 0))
+		df = ((t_dir*)head->content)->fstat->st_size\
+			- ((t_dir*)current->content)->fstat->st_size;
+		if ((!(options & OPT_REV) && df < 0)\
+			|| ((options & OPT_REV) && df > 0))
 			break ;
-		h = h->next;
+		prev = head;
+		head = head->next;
 	}
-	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
-	h = *lst;
-	*lst = h->next;
-	free(h);
+	if (prev)
+		ft_lstinsert(prev, current);
+	else
+		ft_lstadd(lst, current);
 }
 
 static void	by_alpha(t_list **lst, t_dir dir, const unsigned int options)
 {
 	t_list	*h;
+	t_list	*prev;
 	int		df;
 
-	ft_lstadd(lst, ft_lstnew(NULL, 0));
 	h = *lst;
-	while (h->next)
+	prev = NULL;
+	while (h)
 	{
-		df = ft_strcmp(((t_dir*)h->next->content)->full, dir.full);
+		df = ft_strcmp(((t_dir*)h->content)->full, dir.full);
 		if ((!(options & OPT_REV) && df > 0) || ((options & OPT_REV) && df < 0))
 			break ;
+		prev = h;
 		h = h->next;
 	}
-	ft_lstinsert(&h, ft_lstnew(&dir, sizeof(t_dir)));
-	h = *lst;
-	*lst = h->next;
-	free(h);
+	if (prev)
+		ft_lstinsert(prev, ft_lstnew(&dir, sizeof(t_dir)));
+	else
+		ft_lstadd(lst, ft_lstnew(&dir, sizeof(t_dir)));
 }
 
-void		ft_insert_dir(t_list **lst, t_dir dir, const unsigned int options)
+void		ft_initial_list(t_list **lst, t_dir dir,\
+				const unsigned int options)
 {
-	void (*pf[5])(t_list **lst, t_dir dir, const unsigned int options);
-
 	if (*lst == NULL || options & OPT_NOSORT)
 		ft_lstappend(lst, ft_lstnew(&dir, sizeof(t_dir)));
 	else
+		by_alpha(lst, dir, options);
+}
+
+void		ft_order_dirs(t_list **lst, const unsigned options)
+{
+	void (*pf[4])(t_list **lst, t_list *current, const unsigned int options);
+	t_list	*head;
+	t_list	*tmp;
+
+	if (*lst == NULL || (options & OPT_NOSORT))
+		return ;
+	pf[0] = by_lat;
+	pf[1] = by_lct;
+	pf[2] = by_lmt;
+	pf[3] = by_size;
+	head = (*lst)->next;
+	(*lst)->next = NULL;
+	while (head)
 	{
-		pf[0] = by_alpha;
-		pf[1] = by_lat;
-		pf[2] = by_lct;
-		pf[3] = by_lmt;
-		pf[4] = by_size;
+		tmp = head->next;
 		if (options & OPT_SIZESORT)
-			(pf[4])(lst, dir, options);
+			(pf[3])(lst, head, options);
 		else if (options & OPT_MTIME)
 		{
 			if (options & OPT_ATIME)
-				(pf[1])(lst, dir, options);
+				(pf[0])(lst, head, options);
 			else if (options & OPT_CTIME)
-				(pf[2])(lst, dir, options);
+				(pf[1])(lst, head, options);
 			else
-				(pf[3])(lst, dir, options);
+				(pf[2])(lst, head, options);
 		}
 		else
-			(pf[0])(lst, dir, options);
+			ft_lstappend(lst, head);
+		head = tmp;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/25 17:26:10 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/15 16:17:46 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/16 23:47:44 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,15 +85,42 @@ static int	ft_handle_options(int ac, char **av, unsigned int *options)
 	return (i);
 }
 
-static void	ft_print_file_and_dir(t_list **tab_lst, unsigned int options)
+static void	ft_print_file_and_dir(t_list **tab_lst, const unsigned int options)
 {
 	t_bool	flistexist;
-
+	
 	flistexist = (tab_lst[0]) ? TRUE : FALSE;
-	ft_display(tab_lst[0], options, FALSE);
-	if (tab_lst[0] && tab_lst[1])
+
+	if (ft_display(tab_lst[0], options, FALSE) && tab_lst[1])
 		ft_printf("\n");
 	ft_list_and_rec(tab_lst[1], options, flistexist);
+}
+
+static void	ft_split_args(t_list *tab_lst[2], const unsigned int options)
+{
+	t_list	*prev;
+	t_list	*head;
+	t_list	*next;
+
+	head = tab_lst[0];
+	prev = NULL;
+	while (head)
+	{
+		next = head->next;
+		if (!(options & OPT_NORECDIR)\
+			&& ((t_dir*)head->content)->fstat
+			&& S_ISDIR(((t_dir*)head->content)->fstat->st_mode))
+		{
+			if (prev)
+				prev->next = head->next;
+			else
+				tab_lst[0] = tab_lst[0]->next;
+			ft_lstappend(&tab_lst[1], head); 
+		}
+		else
+			prev = head;
+		head = next;
+	}
 }
 
 int			main(int ac, char **av)
@@ -104,17 +131,26 @@ int			main(int ac, char **av)
 	t_dir			tmp;
 
 	if ((i = ft_handle_options(ac, av, &options)) == -1)
-		return (-1);
+		return (1);
 	ft_bzero(tab_lst, sizeof(t_list*) * 2);
-	if (i == ac && ft_fill_fstat(&tmp, NULL, ".") == TRUE)
-		ft_insert_dir((options & OPT_NORECDIR) ? &tab_lst[0] : &tab_lst[1],\
-			tmp, options);
+	if (i == ac)
+	{
+		ft_gen_tdir(&tmp, NULL, ".");
+		ft_gen_fstat(&tmp);
+		ft_lstadd((options & OPT_NORECDIR) ? &tab_lst[0] : &tab_lst[1],\
+			ft_lstnew(&tmp, sizeof(t_dir)));
+	}
 	else
+	{
 		while (i < ac)
-			if (ft_fill_fstat(&tmp, NULL, av[i++]) == TRUE)
-				ft_insert_dir((!(options & OPT_NORECDIR)\
-					&& S_ISDIR(tmp.fstat->st_mode)) ?\
-					&tab_lst[1] : &tab_lst[0], tmp, options);
+		{
+			ft_gen_tdir(&tmp, NULL, av[i++]);
+			ft_initial_list(&tab_lst[0], tmp, options);
+		}
+		ft_get_args_stat(tab_lst[0]);
+		ft_order_dirs(&tab_lst[0], options);
+		ft_split_args(tab_lst, options);
+	}
 	ft_print_file_and_dir(tab_lst, options);
 	return (0);
 }

@@ -6,20 +6,21 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/15 16:07:17 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/15 16:08:06 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/16 23:48:19 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "t_dir.h"
 
-void			ft_del_tdir(t_dir *dir)
+void		ft_del_tdir(t_dir *dir)
 {
 	free(dir->name);
 	free(dir->full);
 	free(dir->fstat);
+	ft_bzero(dir, sizeof(t_dir));
 }
 
-static char		*ft_get_only_name(char *str)
+static char	*ft_get_only_name(char *str)
 {
 	int	i;
 	int	last_slash_pos;
@@ -33,7 +34,6 @@ static char		*ft_get_only_name(char *str)
 		return (str);
 	else if (str[last_slash_pos + 1] == '\0')
 	{
-		str[last_slash_pos] = '\0';
 		while (str[last_slash_pos - 1] != '/')
 			last_slash_pos--;
 		return (&str[last_slash_pos]);
@@ -42,27 +42,23 @@ static char		*ft_get_only_name(char *str)
 		return (&str[last_slash_pos + 1]);
 }
 
-static t_dir	ft_gen_tdir(char *path, char *name)
+void		ft_gen_tdir(t_dir *tmp, char *path, char *name)
 {
-	t_dir	new;
-
-	new.name = ft_strdup(ft_get_only_name(name));
+	tmp->name = ft_strdup(ft_get_only_name(name));
 	if (path == NULL)
-		new.full = ft_strdup(ft_get_only_name(name));
+		tmp->full = ft_strdup(name);
 	else
 	{
 		if (ft_strequ(path, "/") == 1)
-			new.full = ft_strjoin(path, name);
+			tmp->full = ft_strjoin(path, name);
 		else
-			new.full = ft_strjoinsep(path, name, '/');
+			tmp->full = ft_strjoinsep(path, name, '/');
 	}
-	new.fstat = (struct stat*)malloc(sizeof(struct stat));
-	return (new);
+	tmp->fstat = (struct stat*)malloc(sizeof(struct stat));
 }
 
-t_bool			ft_fill_fstat(t_dir *tmp, char *path, char *name)
+t_bool		ft_gen_fstat(t_dir *tmp)
 {
-	*tmp = ft_gen_tdir(path, name);
 	if (lstat(tmp->full, tmp->fstat) == -1)
 	{
 		ft_dprintf(2, "ls: %s: %s\n", tmp->full, strerror(errno));
@@ -70,4 +66,16 @@ t_bool			ft_fill_fstat(t_dir *tmp, char *path, char *name)
 		return (FALSE);
 	}
 	return (TRUE);
+}
+
+void		ft_get_args_stat(t_list *lst)
+{
+	t_list	*head;
+
+	head = lst;
+	while (head)
+	{
+		ft_gen_fstat(head->content);
+		head = head->next;
+	}
 }

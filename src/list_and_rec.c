@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/25 17:26:31 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/15 15:50:56 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/16 23:42:49 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,23 +24,31 @@ static void	ft_printdir(DIR *dirp, t_dir *current, const unsigned int options)
 	while ((dir = readdir(dirp)) != NULL)
 	{
 		if ((options & OPT_ALL) || dir->d_name[0] != '.')
-			if (ft_fill_fstat(&tmp, current->full, dir->d_name) == TRUE)
-				ft_insert_dir(&dir_to_disp, tmp, options);
+		{
+			ft_gen_tdir(&tmp, current->full, dir->d_name);
+			ft_initial_list(&dir_to_disp, tmp, options);
+		}
 		if ((options & OPT_REC) && dir->d_type == DT_DIR\
 			&& ((ft_strequ(dir->d_name, ".") == 0\
 			&& ft_strequ(dir->d_name, "..") == 0)\
 			&& ((options & OPT_ALL) || dir->d_name[0] != '.')))
-			if (ft_fill_fstat(&tmp, current->full, dir->d_name) == TRUE)
-				ft_insert_dir(&dir_to_rec, tmp, options);
+		{	
+			ft_gen_tdir(&tmp, current->full, dir->d_name);
+			ft_initial_list(&dir_to_rec, tmp, options);
+		}
 	}
 	closedir(dirp);
+	ft_get_args_stat(dir_to_disp);
+	ft_get_args_stat(dir_to_rec);
+	ft_order_dirs(&dir_to_disp, options);
+	ft_order_dirs(&dir_to_rec, options);
 	ft_display(dir_to_disp, options, TRUE);
 	if (dir_to_rec && ft_printf("\n"))
 		ft_list_and_rec(dir_to_rec, options, TRUE);
 	ft_del_tdir(current);
 }
 
-void		ft_list_and_rec(t_list *lst_dir, unsigned int options,\
+void		ft_list_and_rec(t_list *lst_dir, const unsigned int options,\
 				t_bool header)
 {
 	DIR		*dirp;

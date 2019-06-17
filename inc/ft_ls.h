@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/23 16:55:11 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/15 16:14:37 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/16 17:15:47 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,6 @@ typedef struct	s_dir
 	char			*name;
 	char			*full;
 	struct stat		*fstat;
-	struct passwd	*owner;
-	struct group	*group;
 }				t_dir;
 
 #endif

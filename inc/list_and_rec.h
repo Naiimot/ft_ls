@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/15 16:16:43 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/15 16:16:45 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/16 15:49:57 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,10 @@
 # include <dirent.h>
 
 void	ft_display(t_list *lst, unsigned int options, t_bool dirs);
-void	ft_insert_dir(t_list **lst, t_dir dir, const unsigned int options);
+void	ft_insert_dir(t_list **lst, t_dir dir, const unsigned int options,\
+			t_bool isarg);
 void	ft_del_tdir(t_dir *dir);
 void	ft_list_and_rec(t_list *lst_dir, unsigned int options, t_bool header);
-t_bool	ft_fill_fstat(t_dir *tmp, char *path, char *name);
+t_bool	ft_gen_tdir(t_dir *tmp, char *path, char *name);
 
 #endif
