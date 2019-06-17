@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 16:30:05 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/17 19:08:19 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 20:24:49 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,19 @@ static void	ft_get_field_sizes_2(struct stat *fstat, int *field_sizes,\
 	group = getgrgid(fstat->st_gid);
 	if ((tmp = ft_lenint_base(fstat->st_nlink, 10)) > field_sizes[0])
 		field_sizes[0] = tmp;
-	if (!(options & OPT_ONLYGRP)\
-		&& (tmp = ft_strlen(owner->pw_name)) > field_sizes[1])
-		field_sizes[1] = tmp;
-	if ((tmp = ft_strlen(group->gr_name)) > field_sizes[2])
+	if (!(options & OPT_ONLYGRP))
+	{
+		if (!(owner))
+		{
+			if ((tmp = ft_lenint_base(fstat->st_uid, 10)) > field_sizes[1])
+				field_sizes[1] = tmp;
+		}
+		else if ((tmp = ft_strlen(owner->pw_name)) > field_sizes[1])
+			field_sizes[1] = tmp;
+	}
+	if (!(group) && (tmp = ft_lenint_base(fstat->st_gid, 10)) > field_sizes[2])
+		field_sizes[2] = tmp;
+	else if ((tmp = ft_strlen(group->gr_name)) > field_sizes[2])
 		field_sizes[2] = tmp;
 	if ((tmp = ft_lenint_base(fstat->st_size, 10)) > field_sizes[3])
 		field_sizes[3] = tmp;

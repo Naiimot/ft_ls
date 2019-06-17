@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/15 15:51:12 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/16 18:02:57 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 20:24:51 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,19 +70,29 @@ static void	ft_ldisplay_2(t_dir *dir, t_xattr_acl *storage,\
 		S_ISDIR(dir->fstat->st_mode));
 }
 
-void		ft_ldisplay(t_dir *dir, int *max_len, char *perms,\
-				unsigned int options)
+static void	ft_pwgr(struct stat *fstat, int *max_len,\
+				const unsigned int options)
 {
 	struct passwd	*owner;
 	struct group	*group;
+
+	owner = getpwuid(fstat->st_uid);
+	group = getgrgid(fstat->st_gid);
+	if (!(options & OPT_ONLYGRP))
+		(owner) ? ft_printf("%-*s", max_len[1], owner->pw_name) :\
+			ft_printf("%-*d", max_len[1], fstat->st_uid);
+	(group) ? ft_printf("%-*s", max_len[2], group->gr_name) :\
+		ft_printf("%-*d", max_len[2], fstat->st_gid);
+}
+
+void		ft_ldisplay(t_dir *dir, int *max_len, char *perms,\
+				unsigned int options)
+{
 	t_xattr_acl		storage;
 
-	owner = getpwuid(dir->fstat->st_uid);
-	group = getgrgid(dir->fstat->st_gid);
-	ft_printf("%s%c%*d %-*s%-*s", perms,\
-		ft_xattr_acl(dir->full, &storage), max_len[0], dir->fstat->st_nlink,\
-		max_len[1], (options & OPT_ONLYGRP) ? "" : owner->pw_name,\
-		max_len[2], group->gr_name);
+	ft_printf("%s%c%*d ", perms, ft_xattr_acl(dir->full, &storage), max_len[0],\
+		dir->fstat->st_nlink);
+	ft_pwgr(dir->fstat, max_len, options);
 	if (perms[0] == 'c')
 		ft_printf("%3d, %3d %s %s%s%s", dir->fstat->st_rdev >> 24 & 0xff,\
 		dir->fstat->st_rdev & 0xffffff, ft_6month(dir, options) + 4,\
