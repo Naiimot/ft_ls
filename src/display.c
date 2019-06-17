@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 16:30:05 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/17 17:15:53 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 19:08:19 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ static void	ft_get_field_sizes(t_list *lst, int *field_sizes,\
 	if (!(options & OPT_ONLYGRP))
 		field_sizes[1] += 2;
 	field_sizes[2] += 2;
-	if ((options & OPT_LONG) && dirs == TRUE && ft_lstlen(lst) > 2)
+	if ((options & OPT_LONG) && dirs == TRUE)
 		ft_printf("total %d\n", field_sizes[4]);
 }
 
@@ -112,17 +112,14 @@ t_bool		ft_display(t_list *lst, unsigned int options, t_bool dirs)
 	head = lst;
 	while (head)
 	{
-		if (((t_dir*)head->content)->fstat)
+		if (((t_dir*)head->content)->fstat && (printed = TRUE))
 		{
 			ft_get_perms(((t_dir*)head->content)->fstat, perms);
 			if ((options & OPT_ALL) || ((t_dir*)head->content)->name[0] != '.')
 			{
-				if (options & OPT_LONG)
-					ft_ldisplay(head->content, field_sizes, perms, options);
-				else
-					ft_printf("%s%s%s\n", ft_colorize(perms, options),\
-						((t_dir*)head->content)->name, C_EOC);
-				printed = TRUE;
+				(options & OPT_LONG) ? ft_ldisplay(head->content, field_sizes,\
+					perms, options) : ft_printf("%s%s%s\n", ft_colorize(perms,\
+					options), ((t_dir*)head->content)->name, C_EOC);
 			}
 			ft_del_tdir(head->content);
 		}

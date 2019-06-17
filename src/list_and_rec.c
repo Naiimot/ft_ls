@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/25 17:26:31 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/17 17:53:21 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 19:27:43 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,6 @@ static void	ft_disp_and_rec(t_list *dir_to_rec, t_list *dir_to_disp,\
 	ft_display(dir_to_disp, options, TRUE);
 	if (dir_to_rec && ft_printf("\n"))
 		ft_list_and_rec(dir_to_rec, options, TRUE);
-}
-
-static void	ft_make_tdir(t_list **lst, char *path, char *name,\
-				const unsigned int options)
-{
-	t_dir			tmp;
-
-	ft_gen_tdir(&tmp, path, name);
-	ft_initial_list(lst, tmp, options);
 }
 
 static void	ft_readdir(DIR *dirp, t_dir *current, const unsigned int options)

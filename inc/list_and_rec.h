@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/15 16:16:43 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/17 17:54:58 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 19:25:58 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ void	ft_list_and_rec(t_list *lst_dir, unsigned int options, t_bool header);
 t_bool	ft_gen_tdir(t_dir *tmp, char *path, char *name);
 void	ft_order_dirs(t_list **lst, const unsigned options);
 void	ft_initial_list(t_list **lst, t_dir dir, const unsigned int options);
-void	ft_get_args_stat(t_list **lst);
+t_bool	ft_get_args_stat(t_list **lst);
+void	ft_make_tdir(t_list **lst, char *path, char *name,\
+			const unsigned int options);
 
 #endif

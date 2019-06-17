@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/25 17:26:10 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/17 18:01:57 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 19:26:37 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,33 +93,6 @@ static void	ft_print_file_and_dir(t_list **tab_lst, const unsigned int options,\
 	ft_list_and_rec(tab_lst[1], options, printed);
 }
 
-static void	ft_split_args(t_list *tab_lst[2], const unsigned int options)
-{
-	t_list	*prev;
-	t_list	*head;
-	t_list	*next;
-
-	head = tab_lst[0];
-	prev = NULL;
-	while (head)
-	{
-		next = head->next;
-		if (!(options & OPT_NORECDIR)\
-			&& ((t_dir*)head->content)->fstat
-			&& S_ISDIR(((t_dir*)head->content)->fstat->st_mode))
-		{
-			if (prev)
-				prev->next = head->next;
-			else
-				tab_lst[0] = tab_lst[0]->next;
-			ft_lstappend(&tab_lst[1], head); 
-		}
-		else
-			prev = head;
-		head = next;
-	}
-}
-
 int			main(int ac, char **av)
 {
 	unsigned int	options;
@@ -128,11 +101,10 @@ int			main(int ac, char **av)
 	t_dir			tmp;
 	t_bool			printed;
 
-	printed = FALSE;
 	if ((i = ft_handle_options(ac, av, &options)) == -1)
 		return (1);
 	ft_bzero(tab_lst, sizeof(t_list*) * 2);
-	if (i == ac)
+	if ((printed = FALSE) || i == ac)
 	{
 		ft_gen_tdir(&tmp, NULL, ".");
 		ft_gen_fstat(&tmp);
@@ -142,13 +114,8 @@ int			main(int ac, char **av)
 	else
 	{
 		while (i < ac)
-		{
-			ft_gen_tdir(&tmp, NULL, av[i++]);
-			ft_initial_list(&tab_lst[0], tmp, options);
-		}
-		printed = (ft_lstlen(tab_lst[0])) > 1 ? TRUE : FALSE;
-		ft_get_args_stat(&tab_lst[0]);
-		ft_order_dirs(&tab_lst[0], options);
+			ft_make_tdir(&tab_lst[0], NULL, av[i++], options);
+		printed = ft_get_args_stat(&tab_lst[0]);
 		ft_split_args(tab_lst, options);
 	}
 	ft_print_file_and_dir(tab_lst, options, printed);

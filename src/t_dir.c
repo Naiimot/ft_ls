@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/15 16:07:17 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/17 17:48:54 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 19:26:15 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,26 +68,11 @@ t_bool		ft_gen_fstat(t_dir *tmp)
 	return (TRUE);
 }
 
-void		ft_get_args_stat(t_list **lst)
+void		ft_make_tdir(t_list **lst, char *path, char *name,\
+				const unsigned int options)
 {
-	t_list	*head;
-	t_list	*prev;
+	t_dir			tmp;
 
-	head = *lst;
-	prev = NULL;
-	while (head)
-	{
-		if (!ft_gen_fstat(head->content))
-		{
-			if (prev)
-				prev->next = head->next;
-			else
-				*lst = head->next;
-			free(head->content);
-			free(head);
-		}
-		else
-			prev = head;
-		head = head->next;
-	}
+	ft_gen_tdir(&tmp, path, name);
+	ft_initial_list(lst, tmp, options);
 }
