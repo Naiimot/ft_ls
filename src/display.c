@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 16:30:05 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/17 20:24:49 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 20:35:04 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ static void	ft_get_field_sizes(t_list *lst, int *field_sizes,\
 	if (!(options & OPT_ONLYGRP))
 		field_sizes[1] += 2;
 	field_sizes[2] += 2;
-	if ((options & OPT_LONG) && dirs == TRUE)
+	if ((options & OPT_LONG) && dirs == TRUE && ft_lstlen(lst) > 2)
 		ft_printf("total %d\n", field_sizes[4]);
 }
 
