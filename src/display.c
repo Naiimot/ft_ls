@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 16:30:05 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/16 23:47:27 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 17:15:53 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static void	ft_get_field_sizes_2(struct stat *fstat, int *field_sizes,\
 }
 
 static void	ft_get_field_sizes(t_list *lst, int *field_sizes,\
-				unsigned int options)
+				unsigned int options, t_bool dirs)
 {
 	t_list	*h;
 
@@ -96,6 +96,8 @@ static void	ft_get_field_sizes(t_list *lst, int *field_sizes,\
 	if (!(options & OPT_ONLYGRP))
 		field_sizes[1] += 2;
 	field_sizes[2] += 2;
+	if ((options & OPT_LONG) && dirs == TRUE && ft_lstlen(lst) > 2)
+		ft_printf("total %d\n", field_sizes[4]);
 }
 
 t_bool		ft_display(t_list *lst, unsigned int options, t_bool dirs)
@@ -106,9 +108,7 @@ t_bool		ft_display(t_list *lst, unsigned int options, t_bool dirs)
 	t_bool	printed;
 
 	printed = FALSE;
-	ft_get_field_sizes(lst, field_sizes, options);
-	if ((options & OPT_LONG) && dirs == TRUE && ft_lstlen(lst) > 2)
-		ft_printf("total %d\n", field_sizes[4]);
+	ft_get_field_sizes(lst, field_sizes, options, dirs);
 	head = lst;
 	while (head)
 	{
@@ -122,9 +122,9 @@ t_bool		ft_display(t_list *lst, unsigned int options, t_bool dirs)
 				else
 					ft_printf("%s%s%s\n", ft_colorize(perms, options),\
 						((t_dir*)head->content)->name, C_EOC);
+				printed = TRUE;
 			}
 			ft_del_tdir(head->content);
-			printed = TRUE;
 		}
 		head = head->next;
 	}

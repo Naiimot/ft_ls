@@ -6,19 +6,19 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 16:29:28 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/16 23:42:56 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 17:54:14 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "order_dirs.h"
 
-void by_size(t_list **lst, t_list *current, const unsigned int options)
+static void	by_size(t_list **lst, t_list *current, const unsigned int options)
 {
 	t_list	*head;
 	t_list	*prev;
 	int		df;
 
-	head = *lst; 
+	head = *lst;
 	prev = NULL;
 	while (head)
 	{
@@ -69,31 +69,26 @@ void		ft_initial_list(t_list **lst, t_dir dir,\
 
 void		ft_order_dirs(t_list **lst, const unsigned options)
 {
-	void (*pf[4])(t_list **lst, t_list *current, const unsigned int options);
 	t_list	*head;
 	t_list	*tmp;
 
 	if (*lst == NULL || (options & OPT_NOSORT))
 		return ;
-	pf[0] = by_lat;
-	pf[1] = by_lct;
-	pf[2] = by_lmt;
-	pf[3] = by_size;
 	head = (*lst)->next;
 	(*lst)->next = NULL;
 	while (head)
 	{
 		tmp = head->next;
 		if (options & OPT_SIZESORT)
-			(pf[3])(lst, head, options);
+			by_size(lst, head, options);
 		else if (options & OPT_MTIME)
 		{
 			if (options & OPT_ATIME)
-				(pf[0])(lst, head, options);
+				by_lat(lst, head, options);
 			else if (options & OPT_CTIME)
-				(pf[1])(lst, head, options);
+				by_lct(lst, head, options);
 			else
-				(pf[2])(lst, head, options);
+				by_lmt(lst, head, options);
 		}
 		else
 			ft_lstappend(lst, head);

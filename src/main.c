@@ -6,7 +6,7 @@
 /*   By: tdelabro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/25 17:26:10 by tdelabro          #+#    #+#             */
-/*   Updated: 2019/06/16 23:47:44 by tdelabro         ###   ########.fr       */
+/*   Updated: 2019/06/17 18:01:57 by tdelabro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,15 +85,12 @@ static int	ft_handle_options(int ac, char **av, unsigned int *options)
 	return (i);
 }
 
-static void	ft_print_file_and_dir(t_list **tab_lst, const unsigned int options)
+static void	ft_print_file_and_dir(t_list **tab_lst, const unsigned int options,\
+				t_bool printed)
 {
-	t_bool	flistexist;
-	
-	flistexist = (tab_lst[0]) ? TRUE : FALSE;
-
 	if (ft_display(tab_lst[0], options, FALSE) && tab_lst[1])
 		ft_printf("\n");
-	ft_list_and_rec(tab_lst[1], options, flistexist);
+	ft_list_and_rec(tab_lst[1], options, printed);
 }
 
 static void	ft_split_args(t_list *tab_lst[2], const unsigned int options)
@@ -129,7 +126,9 @@ int			main(int ac, char **av)
 	t_list			*tab_lst[2];
 	int				i;
 	t_dir			tmp;
+	t_bool			printed;
 
+	printed = FALSE;
 	if ((i = ft_handle_options(ac, av, &options)) == -1)
 		return (1);
 	ft_bzero(tab_lst, sizeof(t_list*) * 2);
@@ -147,10 +146,11 @@ int			main(int ac, char **av)
 			ft_gen_tdir(&tmp, NULL, av[i++]);
 			ft_initial_list(&tab_lst[0], tmp, options);
 		}
-		ft_get_args_stat(tab_lst[0]);
+		printed = (ft_lstlen(tab_lst[0])) > 1 ? TRUE : FALSE;
+		ft_get_args_stat(&tab_lst[0]);
 		ft_order_dirs(&tab_lst[0], options);
 		ft_split_args(tab_lst, options);
 	}
-	ft_print_file_and_dir(tab_lst, options);
+	ft_print_file_and_dir(tab_lst, options, printed);
 	return (0);
 }
