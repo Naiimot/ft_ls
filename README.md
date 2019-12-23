@@ -1,6 +1,6 @@
 # ft_ls
 
-This program copy the behaviour of the Unix command 'ls'.
+This program copy the behaviour of **the Unix command 'ls'**. Appart from the implementation of a recursive algorithm, for the -R option, this project allow me to familiarize myself with the **Unix file system and permisions**.
 
 I implemented the following flags : **-RalfrStuce@gG--**
 - R:  list subdirectories recursively
